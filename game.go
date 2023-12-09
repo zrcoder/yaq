@@ -10,6 +10,19 @@ import (
 	"github.com/zrcoder/yaq/common"
 )
 
+func Run(path string) {
+	base := &Base{CfgPath: path}
+	data, err := os.ReadFile(filepath.Join(path, common.IndexFile))
+	fatalIfError(err)
+	err = toml.Unmarshal(data, base)
+	fatalIfError(err)
+	game, err := get(base.Mode)
+	fatalIfError(err)
+	base.Init(data)
+	game.SetBase(base)
+	game.Run()
+}
+
 type Game interface {
 	SetBase(*Base)
 	Run()
@@ -21,25 +34,12 @@ func Register(mode string, g Game) {
 	supportedGames[mode] = g
 }
 
-func Get(mode string) (Game, error) {
+func get(mode string) (Game, error) {
 	g, ok := supportedGames[mode]
 	if ok {
 		return g, nil
 	}
 	return nil, fmt.Errorf("not supported game mode: %s", mode)
-}
-
-func Run(path string) {
-	base := &Base{CfgPath: path}
-	data, err := os.ReadFile(filepath.Join(path, common.IndexFile))
-	fatalIfError(err)
-	err = toml.Unmarshal(data, base)
-	fatalIfError(err)
-	game, err := Get(base.Mode)
-	fatalIfError(err)
-	base.Init(data)
-	game.SetBase(base)
-	game.Run()
 }
 
 func fatalIfError(err error) {

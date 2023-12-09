@@ -17,22 +17,16 @@ import (
 	"github.com/zrcoder/yaq/common"
 )
 
-type (
-	errMsg  error
-	moveMsg struct{}
-	resMsg  struct{}
-)
-
 var Instance = &Game{}
 
 type Game struct {
 	err error
 	*tea.Program
 	*yaq.Base
-	player      *Sprite
+	player      *sprite
 	successInfo string
 	state       common.State
-	scenes      []*Scene `toml:"_"`
+	scenes      []*scene `toml:"_"`
 	SceneNames  []string `toml:"scenes"`
 	sceneIndex  int
 	totalStars  int
@@ -41,8 +35,10 @@ type Game struct {
 
 func (g *Game) Init() tea.Cmd {
 	if err := g.load(); err != nil {
-		return func() tea.Msg { return errMsg(err) }
+		return func() tea.Msg { return err }
 	}
+	g.Editor.SetHeight(g.Rows)
+	g.Editor.SetWidth(g.Columns * 3)
 	g.loaded = true
 	return textarea.Blink
 }
@@ -52,10 +48,8 @@ func (g *Game) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return g, nil
 	}
 
-	var cmds []tea.Cmd
-	var cmd tea.Cmd
 	switch msg := msg.(type) {
-	case errMsg:
+	case common.ErrMsg:
 		g.err = msg
 		g.state = common.Failed
 		g.Editor.Blur()
@@ -70,19 +64,15 @@ func (g *Game) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			g.state = common.Running
 			g.resetLevel()
 		default:
-			if !g.Editor.Focused() {
-				cmd = g.Editor.Focus()
-				cmds = append(cmds, cmd)
-			}
 		}
 	}
 	g.successInfo = "Well done!"
 	if !g.allFinished() {
 		g.successInfo = g.currentLevel().SuccessMsg
 	}
+	var cmd tea.Cmd
 	g.Editor, cmd = g.Editor.Update(msg)
-	cmds = append(cmds, cmd)
-	return g, tea.Batch(cmds...)
+	return g, cmd
 }
 
 func (g *Game) View() string {
@@ -90,14 +80,14 @@ func (g *Game) View() string {
 		return dialog.Success("all challenges finished!").String()
 	}
 
-	title := fmt.Sprintf("%s > %s > %s\t", g.Name, g.currentScene().name, g.currentLevel().name)
-	title += style.Help.Render(fmt.Sprintf("Left: %d\n", g.totalStars))
+	title := fmt.Sprintf("%s > %s > %s", g.Name, g.currentScene().name, g.currentLevel().name)
+	title += style.Help.Render(fmt.Sprintf("\tLeft: %d\n", g.totalStars))
 	leftView := ""
 	switch {
 	case g.err != nil:
 		leftView = g.ErrorView(g.err.Error())
 	case !g.loaded:
-		leftView = "loading..."
+		leftView = g.LoadingView()
 	case g.state == common.Succeed:
 		leftView = g.SucceedView(g.successInfo)
 	case g.state == common.Failed:
@@ -117,17 +107,13 @@ func (g *Game) PreCode() string {
 	return g.currentLevel().preCode
 }
 
-func (g *Game) MarkError(err error) {
-	g.Send(errMsg(err))
-}
-
 func (g *Game) MarkResult() {
 	if g.succeed() {
 		g.state = common.Succeed
 	} else {
 		g.state = common.Failed
 	}
-	g.Send(resMsg{})
+	g.Send(common.ResMsg{})
 }
 
 func (g *Game) load() error {
@@ -142,9 +128,9 @@ func (g *Game) loadScenes() error {
 		return errors.New("no scenes in config")
 	}
 
-	g.scenes = make([]*Scene, len(g.SceneNames))
+	g.scenes = make([]*scene, len(g.SceneNames))
 	for i, name := range g.SceneNames {
-		s := &Scene{}
+		s := &scene{}
 		path := filepath.Join(g.CfgPath, name, common.IndexFile)
 		if data, err := os.ReadFile(path); err != nil {
 			return err
@@ -164,8 +150,8 @@ func (g *Game) loadScenes() error {
 	return g.currentScene().loadLevels()
 }
 
-func (g *Game) currentScene() *Scene { return g.scenes[g.sceneIndex] }
-func (g *Game) currentLevel() *Level { return g.currentScene().currentLevel() }
+func (g *Game) currentScene() *scene { return g.scenes[g.sceneIndex] }
+func (g *Game) currentLevel() *level { return g.currentScene().currentLevel() }
 
 func (g *Game) succeed() bool {
 	return g.err == nil && g.totalStars == 0

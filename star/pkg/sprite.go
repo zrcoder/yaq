@@ -10,8 +10,8 @@ import (
 	"github.com/zrcoder/yaq/common"
 )
 
-type Sprite struct {
-	*Scene
+type sprite struct {
+	*scene
 	*common.Position
 	key       string
 	Name      string `toml:"name"`
@@ -28,61 +28,61 @@ type Sprite struct {
 	CanMove   bool `toml:"canMove"`
 }
 
-func (s *Sprite) Up(steps int) {
+func (s *sprite) Up(steps int) {
 	s.move(common.Up, steps)
 }
 
-func (s *Sprite) Left(steps int) {
+func (s *sprite) Left(steps int) {
 	s.move(common.Left, steps)
 }
 
-func (s *Sprite) Down(steps int) {
+func (s *sprite) Down(steps int) {
 	s.move(common.Down, steps)
 }
 
-func (s *Sprite) Right(steps int) {
+func (s *sprite) Right(steps int) {
 	s.move(common.Right, steps)
 }
 
-func (s *Sprite) UpLeft(steps int) {
+func (s *sprite) UpLeft(steps int) {
 	s.move(common.UpLeft, steps)
 }
 
-func (s *Sprite) UpRight(steps int) {
+func (s *sprite) UpRight(steps int) {
 	s.move(common.UpRight, steps)
 }
 
-func (s *Sprite) DownLeft(steps int) {
+func (s *sprite) DownLeft(steps int) {
 	s.move(common.DownLeft, steps)
 }
 
-func (s *Sprite) DownRight(steps int) {
+func (s *sprite) DownRight(steps int) {
 	s.move(common.DownRight, steps)
 }
 
-func (s *Sprite) move(dir common.Direction, steps int) {
+func (s *sprite) move(dir common.Direction, steps int) {
 	if !s.CanMove {
 		name := s.Name
 		if s.count > 0 {
 			name = s.Group
 		}
 		err := fmt.Errorf("%s can't move", name)
-		s.Send(errMsg(err))
+		s.Send(err)
 		return
 	}
 
 	for ; steps > 0; steps-- {
 		err := s.step(dir)
 		if err != nil {
-			s.Send(errMsg(err))
+			s.Send(err)
 			return
 		}
-		s.Send(moveMsg{})
+		s.Send(common.MoveMsg{})
 		time.Sleep(300 * time.Millisecond)
 	}
 }
 
-func (s *Sprite) step(dir common.Direction) error {
+func (s *sprite) step(dir common.Direction) error {
 	dstPos := s.Transform(dir)
 	if s.outRange(dstPos) {
 		return errors.New("can't move out of the world")
@@ -121,7 +121,7 @@ func (s *Sprite) step(dir common.Direction) error {
 	return nil
 }
 
-func (s *Sprite) crossCheck(sps []*Sprite) (bool, string) {
+func (s *sprite) crossCheck(sps []*sprite) (bool, string) {
 	if len(sps) == 0 {
 		return !strings.Contains(s.Forbbiden, " "), "blank"
 	}
@@ -139,7 +139,7 @@ func (s *Sprite) crossCheck(sps []*Sprite) (bool, string) {
 	return true, ""
 }
 
-func (s *Sprite) copy() *Sprite {
+func (s *sprite) copy() *sprite {
 	dst := *s
 	return &dst
 }

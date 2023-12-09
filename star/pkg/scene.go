@@ -11,40 +11,40 @@ import (
 
 const tomlExt = ".toml"
 
-type Scene struct {
+type scene struct {
 	*Game
-	Sprites    map[string]*Sprite `toml:"sprites"`
+	Sprites    map[string]*sprite `toml:"sprites"`
 	name       string
 	bgColors   [2]string
 	BgColor1   string   `toml:"bgColor1"`
 	BgColor2   string   `toml:"bgColor2"`
 	LevelNames []string `toml:"levels"`
-	levels     []*Level `toml:"_"`
+	levels     []*level `toml:"_"`
 	levelIndex int
 }
 
-func (s *Scene) loadLevels() error {
+func (s *scene) loadLevels() error {
 	if len(s.LevelNames) == 0 {
 		return fmt.Errorf("no levels in scene %s", s.name)
 	}
 
-	s.levels = make([]*Level, len(s.LevelNames))
+	s.levels = make([]*level, len(s.LevelNames))
 	for i, name := range s.LevelNames {
-		l := &Level{}
+		l := &level{}
 		if data, err := os.ReadFile(filepath.Join(s.CfgPath, s.name, name+tomlExt)); err != nil {
 			return err
 		} else if err := toml.Unmarshal(data, l); err != nil {
 			return err
 		}
 		l.name = name
-		l.Scene = s
+		l.scene = s
 		s.levels[i] = l
 	}
 	s.levelIndex = 0
 	return s.loadCurrentLevel()
 }
 
-func (s *Scene) loadCurrentLevel() error {
+func (s *scene) loadCurrentLevel() error {
 	if len(s.levels) == 0 {
 		return fmt.Errorf("no levels found for scend %s", s.name)
 	}
@@ -56,15 +56,15 @@ func (s *Scene) loadCurrentLevel() error {
 	return s.currentLevel().initialize()
 }
 
-func (s *Scene) currentLevel() *Level {
+func (s *scene) currentLevel() *level {
 	return s.levels[s.levelIndex]
 }
 
-func (s *Scene) outRange(pos common.Position) bool {
+func (s *scene) outRange(pos common.Position) bool {
 	return pos.Y < 0 || pos.Y >= s.Rows || pos.X < 0 || pos.X >= s.Columns
 }
 
-func (s *Scene) clearSpritesCount() {
+func (s *scene) clearSpritesCount() {
 	for _, sp := range s.Sprites {
 		sp.count = 0
 	}

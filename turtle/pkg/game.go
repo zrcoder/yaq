@@ -16,37 +16,35 @@ import (
 	"github.com/zrcoder/yaq/common"
 )
 
-var Instace = &Game{}
+var Instance = &Game{}
 
 type Game struct {
 	err          error
-	currentLevel *Level
+	currentLevel *level
 	*tea.Program
 	*yaq.Base
 	pen        *Pen
+	Name       string             `toml:"name"`
 	Sprites    map[string]*Sprite `toml:"sprites"`
+	Levels     []string           `toml:"levels"`
 	state      common.State
-	Levels     []string `toml:"levels"`
 	totalPoses int
-	Rows       int `toml:"rows"`
-	Columns    int `toml:"columns"`
 	levelIndex int
 	loaded     bool
 }
 
-type errMsg error
+type errMsg = error
 
 func (g *Game) Init() tea.Cmd {
 	err := g.load()
 	if err != nil {
-		g.err = err
-		return nil
-	}
-	if len(g.Levels) == 0 {
-		return func() tea.Msg { return errMsg(errors.New("no levels found")) }
+		return func() tea.Msg { return err }
 	}
 	g.levelIndex = 0
-	g.loadCurrentLevel()
+	err = g.loadCurrentLevel()
+	if err != nil {
+		return func() tea.Msg { return err }
+	}
 	return textarea.Blink
 }
 
@@ -54,13 +52,11 @@ func (g *Game) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	if g.allFinished() {
 		return g, nil
 	}
-	var cmds []tea.Cmd
-	var cmd tea.Cmd
+
 	switch msg := msg.(type) {
 	case errMsg:
 		g.err = msg
 		g.state = common.Failed
-		g.Editor.Blur()
 		return g, nil
 	case tea.KeyMsg:
 		g.err = nil
@@ -72,15 +68,12 @@ func (g *Game) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			g.state = common.Running
 			g.resetLevel()
 		default:
-			if !g.Editor.Focused() {
-				cmd = g.Editor.Focus()
-				cmds = append(cmds, cmd)
-			}
 		}
 	}
+
+	var cmd tea.Cmd
 	g.Editor, cmd = g.Editor.Update(msg)
-	cmds = append(cmds, cmd)
-	return g, tea.Batch(cmds...)
+	return g, cmd
 }
 
 func (g *Game) View() string {
@@ -89,12 +82,13 @@ func (g *Game) View() string {
 	}
 
 	title := fmt.Sprintf("%s > %s", g.Name, g.Levels[g.levelIndex])
+	title += style.Help.Render(fmt.Sprintf("\tLeft: %d\n", g.totalPoses))
 	leftView := ""
 	switch {
 	case g.err != nil:
 		leftView = g.ErrorView(g.err.Error())
 	case !g.loaded:
-		leftView = "loading"
+		leftView = g.LoadingView()
 	case g.state == common.Succeed:
 		leftView = g.SucceedView("Well done")
 	case g.state == common.Failed:
@@ -102,41 +96,58 @@ func (g *Game) View() string {
 	default:
 		leftView = g.currentLevel.View()
 	}
-	leftView = lp.JoinVertical(lp.Left, title, leftView)
+	leftView = lp.JoinVertical(lp.Left,
+		title,
+		leftView,
+	)
+	hintView := ""
+	if g.loaded {
+		hintView = style.Help.Render(g.currentLevel.Hint)
+	}
 	rightView := lp.JoinVertical(lp.Left,
-		style.Help.Render(g.currentLevel.Hint), "",
+		hintView, "",
 		g.Editor.View(), "",
 		g.KeysView())
 	return lp.JoinHorizontal(lp.Top, leftView, "   ", rightView)
 }
 
+func (g *Game) MarkResult() {
+	if g.succeed() {
+		g.state = common.Succeed
+	} else {
+		g.state = common.Failed
+	}
+	g.Send(common.ResMsg{})
+}
+
 func (g *Game) load() error {
-	data, err := os.ReadFile(filepath.Join(g.CfgPath, common.IndexFile))
+	return toml.Unmarshal(g.IndexData, g)
+}
+
+func (g *Game) loadCurrentLevel() error {
+	g.loaded = false
+	if len(g.Levels) == 0 {
+		return errors.New("no levels found")
+	}
+	if g.allFinished() {
+		return nil
+	}
+
+	g.currentLevel = &level{Game: g}
+	data, err := os.ReadFile(filepath.Join(g.CfgPath, g.Levels[g.levelIndex]+common.TomlExt))
 	if err != nil {
 		return err
 	}
-	return toml.Unmarshal(data, g)
-}
-
-func (g *Game) loadCurrentLevel() {
-	lvl := &Level{}
-	data, err := os.ReadFile(filepath.Join(g.CfgPath, g.Levels[g.levelIndex]+common.TomlExt))
+	err = toml.Unmarshal(data, g.currentLevel)
 	if err != nil {
-		g.err = err
-		return
+		return err
 	}
-	err = toml.Unmarshal(data, lvl)
+	err = g.currentLevel.initialize()
 	if err != nil {
-		g.err = err
-		return
+		return err
 	}
-	err = lvl.initialize()
-	if err != nil {
-		g.err = err
-		return
-	}
-	g.currentLevel = lvl
 	g.loaded = true
+	return nil
 }
 
 func (g *Game) allFinished() bool {
@@ -158,4 +169,8 @@ func (g *Game) resetLevel() {
 func (g *Game) outRange(p *common.Position) bool {
 	y, x := p.Y, p.X
 	return y < 0 || y >= g.Rows || x < 0 || x >= g.Columns
+}
+
+func (g *Game) succeed() bool {
+	return g.totalPoses == 0
 }

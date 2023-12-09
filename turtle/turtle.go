@@ -1,27 +1,29 @@
 package turtle
 
 import (
-	"fmt"
 	"log"
 
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/goplus/igop"
 
 	"github.com/zrcoder/yaq"
+	"github.com/zrcoder/yaq/common"
+	_ "github.com/zrcoder/yaq/exported/github.com/zrcoder/yaq/turtle/pkg"
 	"github.com/zrcoder/yaq/turtle/pkg"
 )
 
 func init() {
-	yaq.Register("turtle", &Turtle{Game: pkg.Instace})
+	yaq.Register("turtle", &turtle{Game: pkg.Instance})
 }
 
-type Turtle struct{ *pkg.Game }
+type turtle struct{ *pkg.Game }
 
-func (t *Turtle) SetBase(base *yaq.Base) {
+func (t *turtle) SetBase(base *yaq.Base) {
 	t.Base = base
 }
 
-func (t *Turtle) Run() {
-	fmt.Println("TODO: turtle graphics")
+func (t *turtle) Run() {
+	t.Base.SetSceneSize(t.Rows, t.Columns*3)
 	p := tea.NewProgram(t, tea.WithAltScreen())
 	t.Program = p
 	if _, err := p.Run(); err != nil {
@@ -29,7 +31,7 @@ func (t *Turtle) Run() {
 	}
 }
 
-func (t *Turtle) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+func (t *turtle) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		switch msg.Type {
@@ -44,5 +46,15 @@ func (t *Turtle) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	return t, cmd
 }
 
-func (t *Turtle) runCode() {
+func (s *turtle) runCode() {
+	preCode := `import . "github.com/zrcoder/yaq/turtle/pkg"` + "\n"
+	go func(code string) {
+		_, err := igop.RunFile("main.gop", code, nil, 0)
+		if err != nil {
+			err = common.ParseBuildError(err, preCode)
+			s.Send(err)
+		} else {
+			s.MarkResult()
+		}
+	}(preCode + s.Editor.Value())
 }

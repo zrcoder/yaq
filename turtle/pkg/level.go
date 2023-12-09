@@ -8,9 +8,8 @@ import (
 	"github.com/zrcoder/yaq/common"
 )
 
-type Level struct {
+type level struct {
 	*Game
-	preCode    string
 	Layout     string `toml:"layout"`
 	Code       string `toml:"code"`
 	Hint       string `toml:"hint"`
@@ -19,7 +18,7 @@ type Level struct {
 	Grid       [][]*Block
 }
 
-func (l *Level) initialize() error {
+func (l *level) initialize() error {
 	l.Grid = make([][]*Block, l.Rows)
 	for i := range l.Grid {
 		l.Grid[i] = make([]*Block, l.Columns)
@@ -28,17 +27,18 @@ func (l *Level) initialize() error {
 	lines := strings.SplitN(l.Layout, "\n", l.Rows)
 	setCommonSprite := func(sp *Sprite, y, x int) {
 		if sp.IsPen {
-			l.pen = sp.pen
+			l.pen = sp.Pen
 			l.pen.Position = &common.Position{Y: y, X: x}
 		} else {
-			l.Grid[y][x] = newBlock(sp.Block.Color)
+			l.Grid[y][x] = newBlock(sp.Block.BgColor)
 			l.totalPoses++
 		}
 	}
 	for y, line := range lines {
 		line = line[:min(l.Columns, len(line))]
-		for x, key := range line {
-			sp := l.Sprites[string(key)]
+		for x, ch := range line {
+			key := string(ch)
+			sp := l.Sprites[key]
 			if sp == nil {
 				continue
 			}
@@ -57,29 +57,32 @@ func (l *Level) initialize() error {
 	if l.pen == nil {
 		return errors.New("no pen found")
 	}
-	l.pen.SetStateUp(l.pen.IsUp)
+	l.pen.Game = l.Game
+	l.pen.setStateUp(l.pen.IsUp)
+	l.Editor.SetValue(strings.TrimRight(l.Code, "\n"))
 	return nil
 }
 
-func (l *Level) View() string {
+func (l *level) View() string {
 	buf := strings.Builder{}
-	sep := strings.Repeat("• ", l.Columns) + "•\n"
-	buf.WriteString(sep)
 	for y, row := range l.Grid {
 		for x, sp := range row {
+			display := " • " // blank
 			bgColor := ""
-			if sp != nil {
-				bgColor = sp.Color
+			if sp != nil { // block
+				bgColor = sp.BgColor
+				display = "   "
+			}
+			if l.pen.Y == y && l.pen.X == x { // pen
+				if !l.pen.IsUp {
+					bgColor = l.pen.Color
+				}
+				display = " " + l.pen.Display + " "
 			}
 			s := lp.NewStyle().Background(lp.Color(bgColor))
-			display := "• "
-			if l.pen.Y == y && l.pen.X == x {
-				display = "•" + l.pen.Display
-			}
 			buf.WriteString(s.Render(display))
 		}
-		buf.WriteString("•\n")
-		buf.WriteString(sep)
+		buf.WriteString(" \n")
 	}
 	return buf.String()
 }

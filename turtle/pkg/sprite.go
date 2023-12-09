@@ -2,9 +2,26 @@ package pkg
 
 import (
 	"errors"
+	"time"
 
 	"github.com/zrcoder/yaq/common"
 )
+
+type Sprite struct {
+	*Pen    `toml:"pen"`
+	*Block  `toml:"block"`
+	IsPen   bool   `toml:"isPen"`
+	Sprites string `toml:"sprites"`
+}
+
+type Block struct {
+	BgColor string `toml:"bgColor"`
+	filled  bool
+}
+
+func newBlock(color string) *Block {
+	return &Block{BgColor: color}
+}
 
 type Pen struct {
 	*Game
@@ -14,7 +31,7 @@ type Pen struct {
 	IsUp    bool   `toml:"isUp"`
 }
 
-func (p *Pen) SetStateUp(up bool) {
+func (p *Pen) setStateUp(up bool) {
 	if !up {
 		if p.currentLevel.Grid[p.Y][p.X] == nil {
 			p.Send(errors.New("should paint on marked position"))
@@ -25,35 +42,35 @@ func (p *Pen) SetStateUp(up bool) {
 	p.IsUp = up
 }
 
-func (p *Pen) Up(steps int) {
+func (p *Pen) up(steps int) {
 	p.move(steps, common.Up)
 }
 
-func (p *Pen) Down(steps int) {
+func (p *Pen) down(steps int) {
 	p.move(steps, common.Down)
 }
 
-func (p *Pen) Left(steps int) {
+func (p *Pen) left(steps int) {
 	p.move(steps, common.Left)
 }
 
-func (p *Pen) Right(steps int) {
+func (p *Pen) right(steps int) {
 	p.move(steps, common.Right)
 }
 
-func (p *Pen) UpLeft(steps int) {
+func (p *Pen) upLeft(steps int) {
 	p.move(steps, common.UpLeft)
 }
 
-func (p *Pen) UpRight(steps int) {
+func (p *Pen) upRight(steps int) {
 	p.move(steps, common.UpRight)
 }
 
-func (p *Pen) DownLeft(steps int) {
+func (p *Pen) downLeft(steps int) {
 	p.move(steps, common.DownLeft)
 }
 
-func (p *Pen) DownRight(steps int) {
+func (p *Pen) downRight(steps int) {
 	p.move(steps, common.DownRight)
 }
 
@@ -72,6 +89,7 @@ func (p *Pen) move(steps int, dir common.Direction) {
 			p.Send(errMsg(err))
 			return
 		}
+		time.Sleep(300 * time.Millisecond)
 	}
 }
 
@@ -90,7 +108,10 @@ func (p *Pen) step(dir common.Direction) error {
 
 func (p *Pen) paint(dst *common.Position) {
 	y, x := dst.Y, dst.X
-	p.currentLevel.Grid[y][x].Color = p.Color
-	p.totalPoses--
+	if !p.currentLevel.Grid[y][x].filled {
+		p.currentLevel.Grid[y][x].BgColor = p.Color
+		p.currentLevel.Grid[y][x].filled = true
+		p.totalPoses--
+	}
 	p.Position = dst
 }

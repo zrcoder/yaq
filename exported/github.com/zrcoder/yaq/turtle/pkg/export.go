@@ -3,7 +3,7 @@
 package pkg
 
 import (
-	q "github.com/zrcoder/yaq/star/pkg"
+	q "github.com/zrcoder/yaq/turtle/pkg"
 
 	"reflect"
 
@@ -13,7 +13,7 @@ import (
 func init() {
 	igop.RegisterPackage(&igop.Package{
 		Name: "pkg",
-		Path: "github.com/zrcoder/yaq/star/pkg",
+		Path: "github.com/zrcoder/yaq/turtle/pkg",
 		Deps: map[string]string{
 			"errors": "errors",
 			"fmt":    "fmt",
@@ -27,14 +27,15 @@ func init() {
 			"github.com/zrcoder/yaq/common":             "common",
 			"os":                                        "os",
 			"path/filepath":                             "filepath",
-			"slices":                                    "slices",
-			"sort":                                      "sort",
 			"strings":                                   "strings",
 			"time":                                      "time",
 		},
 		Interfaces: map[string]reflect.Type{},
 		NamedTypes: map[string]reflect.Type{
-			"Game": reflect.TypeOf((*q.Game)(nil)).Elem(),
+			"Block":  reflect.TypeOf((*q.Block)(nil)).Elem(),
+			"Game":   reflect.TypeOf((*q.Game)(nil)).Elem(),
+			"Pen":    reflect.TypeOf((*q.Pen)(nil)).Elem(),
+			"Sprite": reflect.TypeOf((*q.Sprite)(nil)).Elem(),
 		},
 		AliasTypes: map[string]reflect.Type{},
 		Vars: map[string]reflect.Value{
@@ -44,8 +45,9 @@ func init() {
 			"Down":      reflect.ValueOf(q.Down),
 			"DownLeft":  reflect.ValueOf(q.DownLeft),
 			"DownRight": reflect.ValueOf(q.DownRight),
-			"GetSprite": reflect.ValueOf(q.GetSprite),
 			"Left":      reflect.ValueOf(q.Left),
+			"PenDown":   reflect.ValueOf(q.PenDown),
+			"PenUp":     reflect.ValueOf(q.PenUp),
 			"Right":     reflect.ValueOf(q.Right),
 			"Up":        reflect.ValueOf(q.Up),
 			"UpLeft":    reflect.ValueOf(q.UpLeft),

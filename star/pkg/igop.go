@@ -1,3 +1,5 @@
+//go:generate igop export -outdir ../../exported .
+
 package pkg
 
 func Up(steps int) {
@@ -32,6 +34,6 @@ func DownRight(steps int) {
 	Instance.player.DownRight(steps)
 }
 
-func GetSprite(y, x, i int) *Sprite {
+func GetSprite(y, x, i int) *sprite {
 	return Instance.currentLevel().grid[y][x][i]
 }

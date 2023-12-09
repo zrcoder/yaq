@@ -1,18 +1,14 @@
-//go:generate igop export -outdir ../exported ./pkg
-
 package star
 
 import (
-	"fmt"
 	"log"
-	"strconv"
-	"strings"
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/goplus/igop"
 	_ "github.com/goplus/igop/gopbuild"
 
 	"github.com/zrcoder/yaq"
+	"github.com/zrcoder/yaq/common"
 	_ "github.com/zrcoder/yaq/exported/github.com/zrcoder/yaq/star/pkg"
 	"github.com/zrcoder/yaq/star/pkg"
 )
@@ -33,6 +29,7 @@ func (s *star) SetBase(base *yaq.Base) {
 }
 
 func (s *star) Run() {
+	s.SetSceneSize(s.Rows, s.Columns*3)
 	p := tea.NewProgram(s, tea.WithAltScreen())
 	s.Program = p
 	if _, err := p.Run(); err != nil {
@@ -59,26 +56,10 @@ func (s *star) runCode() {
 	go func(code string) {
 		_, err := igop.RunFile("main.gop", code, nil, 0)
 		if err != nil {
-			err = s.parseBuildError(err)
-			s.MarkError(err)
+			err = common.ParseBuildError(err, s.PreCode())
+			s.Send(err)
 		} else {
 			s.MarkResult()
 		}
 	}(s.PreCode() + s.Editor.Value())
-}
-
-func (s *star) parseBuildError(err error) error {
-	msg := err.Error()
-	i := strings.Index(msg, " ")
-	if i == -1 {
-		return err
-	}
-	pre, post := msg[:i], msg[i+1:]
-	arr := strings.SplitN(pre, ":", 3)
-	if len(arr) < 2 {
-		return err
-	}
-	line, _ := strconv.Atoi(arr[1])
-	line -= strings.Count(s.PreCode(), "\n")
-	return fmt.Errorf("line %d: %s", line, post)
 }
