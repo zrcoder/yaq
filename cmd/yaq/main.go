@@ -5,6 +5,7 @@ import (
 
 	"github.com/zrcoder/yaq"
 	// import to register games
+	_ "github.com/zrcoder/yaq/hanoi"
 	_ "github.com/zrcoder/yaq/star"
 	_ "github.com/zrcoder/yaq/turtle"
 )

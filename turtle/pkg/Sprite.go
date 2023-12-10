@@ -78,7 +78,7 @@ func (p *Pen) move(steps int, dir common.Direction) {
 	if p.IsUp {
 		dst := p.Transform(common.Direction{Y: steps * dir.Y, X: steps * dir.X})
 		if p.outRange(&dst) {
-			p.Send(errMsg(errors.New("can't move out of the world")))
+			p.Send(errors.New("can't move out of the world"))
 			return
 		}
 		p.Position = &dst
@@ -86,7 +86,7 @@ func (p *Pen) move(steps int, dir common.Direction) {
 	}
 	for ; steps > 0; steps-- {
 		if err := p.step(dir); err != nil {
-			p.Send(errMsg(err))
+			p.Send(err)
 			return
 		}
 		time.Sleep(300 * time.Millisecond)

@@ -23,10 +23,10 @@ type Game struct {
 	err error
 	*tea.Program
 	*yaq.Base
-	player      *sprite
+	player      *Sprite
 	successInfo string
 	state       common.State
-	scenes      []*scene `toml:"_"`
+	scenes      []*Scene `toml:"_"`
 	SceneNames  []string `toml:"scenes"`
 	sceneIndex  int
 	totalStars  int
@@ -39,7 +39,6 @@ func (g *Game) Init() tea.Cmd {
 	}
 	g.Editor.SetHeight(g.Rows)
 	g.Editor.SetWidth(g.Columns * 3)
-	g.loaded = true
 	return textarea.Blink
 }
 
@@ -52,7 +51,6 @@ func (g *Game) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case common.ErrMsg:
 		g.err = msg
 		g.state = common.Failed
-		g.Editor.Blur()
 		return g, nil
 	case tea.KeyMsg:
 		g.err = nil
@@ -128,9 +126,9 @@ func (g *Game) loadScenes() error {
 		return errors.New("no scenes in config")
 	}
 
-	g.scenes = make([]*scene, len(g.SceneNames))
+	g.scenes = make([]*Scene, len(g.SceneNames))
 	for i, name := range g.SceneNames {
-		s := &scene{}
+		s := &Scene{}
 		path := filepath.Join(g.CfgPath, name, common.IndexFile)
 		if data, err := os.ReadFile(path); err != nil {
 			return err
@@ -150,8 +148,8 @@ func (g *Game) loadScenes() error {
 	return g.currentScene().loadLevels()
 }
 
-func (g *Game) currentScene() *scene { return g.scenes[g.sceneIndex] }
-func (g *Game) currentLevel() *level { return g.currentScene().currentLevel() }
+func (g *Game) currentScene() *Scene { return g.scenes[g.sceneIndex] }
+func (g *Game) currentLevel() *Level { return g.currentScene().currentLevel() }
 
 func (g *Game) succeed() bool {
 	return g.err == nil && g.totalStars == 0

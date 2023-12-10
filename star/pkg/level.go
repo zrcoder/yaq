@@ -10,22 +10,23 @@ import (
 	"github.com/zrcoder/yaq/common"
 )
 
-type level struct {
-	*scene
+type Level struct {
+	*Scene
 	preCode    string
 	Layout     string `toml:"layout"`
 	Code       string `toml:"code"`
 	Hint       string `toml:"hint"`
 	SuccessMsg string `toml:"successMsg"`
 	name       string
-	grid       [][][]*sprite
-	helpItems  []*sprite
+	grid       [][][]*Sprite
+	helpItems  []*Sprite
 }
 
-func (l *level) initialize() error {
-	l.grid = make([][][]*sprite, l.Rows)
+func (l *Level) initialize() error {
+	l.loaded = false
+	l.grid = make([][][]*Sprite, l.Rows)
 	for i := range l.grid {
-		l.grid[i] = make([][]*sprite, l.Columns)
+		l.grid[i] = make([][]*Sprite, l.Columns)
 	}
 	lines := strings.Split(l.Layout, "\n")
 	l.clearSpritesCount()
@@ -41,10 +42,10 @@ func (l *level) initialize() error {
 				continue
 			}
 			if len(sp.Sprites) == 0 {
-				l.grid[y][x] = []*sprite{l.genSprite(sp, y, x)}
+				l.grid[y][x] = []*Sprite{l.genSprite(sp, y, x)}
 				continue
 			}
-			sps := make([]*sprite, len(sp.Sprites))
+			sps := make([]*Sprite, len(sp.Sprites))
 			for i, ch := range sp.Sprites {
 				s := l.Sprites[string(ch)]
 				if s == nil {
@@ -61,24 +62,24 @@ func (l *level) initialize() error {
 	return l.calculate()
 }
 
-func (l *level) genSprite(sp *sprite, y, x int) *sprite {
+func (l *Level) genSprite(sp *Sprite, y, x int) *Sprite {
 	sp.count++
 	sp = sp.copy()
 	if sp.IsPlayer {
 		l.player = sp
 	}
-	sp.scene = l.scene
+	sp.Scene = l.Scene
 	sp.Position = &common.Position{Y: y, X: x}
 	return sp
 }
 
-func (l *level) calculate() error {
+func (l *Level) calculate() error {
 	l.totalStars = 0
 	buf := strings.Builder{}
 	buf.WriteString(`import . "github.com/zrcoder/yaq/star/pkg"`)
 	buf.WriteString("\n\n")
 	l.helpItems = nil
-	helpMap := map[string]*sprite{}
+	helpMap := map[string]*Sprite{}
 	for _, sp := range l.Sprites {
 		if sp.count > 1 {
 			if sp.Group == "" {
@@ -107,17 +108,18 @@ func (l *level) calculate() error {
 			}
 		}
 	}
-	l.helpItems = make([]*sprite, 0, len(helpMap))
+	l.helpItems = make([]*Sprite, 0, len(helpMap))
 	for _, sp := range helpMap {
 		l.helpItems = append(l.helpItems, sp)
 	}
 	l.preCode = buf.String() + "\n" + appendBuf.String()
 	l.Editor.SetValue(strings.TrimRight(l.Code, "\n"))
 	sort.Slice(l.helpItems, func(i, j int) bool { return l.helpItems[i].Name < l.helpItems[j].Name })
+	l.loaded = true
 	return nil
 }
 
-func (l *level) view() string {
+func (l *Level) view() string {
 	buf := strings.Builder{}
 	for y, row := range l.grid {
 		for x, sps := range row {
@@ -142,7 +144,7 @@ func (l *level) view() string {
 	return buf.String()
 }
 
-func spsBgColor(sps []*sprite) string {
+func spsBgColor(sps []*Sprite) string {
 	res := ""
 	for i := len(sps) - 1; i >= 0; i-- {
 		if sps[i].BgColor != "" {
@@ -153,7 +155,7 @@ func spsBgColor(sps []*sprite) string {
 	return res
 }
 
-func (l *level) helpInfo() string {
+func (l *Level) helpInfo() string {
 	const n = 4
 	buf := strings.Builder{}
 	for i, sp := range l.helpItems {

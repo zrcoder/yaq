@@ -10,8 +10,8 @@ import (
 	"github.com/zrcoder/yaq/common"
 )
 
-type sprite struct {
-	*scene
+type Sprite struct {
+	*Scene
 	*common.Position
 	key       string
 	Name      string `toml:"name"`
@@ -28,39 +28,39 @@ type sprite struct {
 	CanMove   bool `toml:"canMove"`
 }
 
-func (s *sprite) Up(steps int) {
+func (s *Sprite) Up(steps int) {
 	s.move(common.Up, steps)
 }
 
-func (s *sprite) Left(steps int) {
+func (s *Sprite) Left(steps int) {
 	s.move(common.Left, steps)
 }
 
-func (s *sprite) Down(steps int) {
+func (s *Sprite) Down(steps int) {
 	s.move(common.Down, steps)
 }
 
-func (s *sprite) Right(steps int) {
+func (s *Sprite) Right(steps int) {
 	s.move(common.Right, steps)
 }
 
-func (s *sprite) UpLeft(steps int) {
+func (s *Sprite) UpLeft(steps int) {
 	s.move(common.UpLeft, steps)
 }
 
-func (s *sprite) UpRight(steps int) {
+func (s *Sprite) UpRight(steps int) {
 	s.move(common.UpRight, steps)
 }
 
-func (s *sprite) DownLeft(steps int) {
+func (s *Sprite) DownLeft(steps int) {
 	s.move(common.DownLeft, steps)
 }
 
-func (s *sprite) DownRight(steps int) {
+func (s *Sprite) DownRight(steps int) {
 	s.move(common.DownRight, steps)
 }
 
-func (s *sprite) move(dir common.Direction, steps int) {
+func (s *Sprite) move(dir common.Direction, steps int) {
 	if !s.CanMove {
 		name := s.Name
 		if s.count > 0 {
@@ -82,7 +82,7 @@ func (s *sprite) move(dir common.Direction, steps int) {
 	}
 }
 
-func (s *sprite) step(dir common.Direction) error {
+func (s *Sprite) step(dir common.Direction) error {
 	dstPos := s.Transform(dir)
 	if s.outRange(dstPos) {
 		return errors.New("can't move out of the world")
@@ -121,7 +121,7 @@ func (s *sprite) step(dir common.Direction) error {
 	return nil
 }
 
-func (s *sprite) crossCheck(sps []*sprite) (bool, string) {
+func (s *Sprite) crossCheck(sps []*Sprite) (bool, string) {
 	if len(sps) == 0 {
 		return !strings.Contains(s.Forbbiden, " "), "blank"
 	}
@@ -139,7 +139,7 @@ func (s *sprite) crossCheck(sps []*sprite) (bool, string) {
 	return true, ""
 }
 
-func (s *sprite) copy() *sprite {
+func (s *Sprite) copy() *Sprite {
 	dst := *s
 	return &dst
 }

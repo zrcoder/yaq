@@ -20,7 +20,7 @@ var Instance = &Game{}
 
 type Game struct {
 	err          error
-	currentLevel *level
+	currentLevel *Level
 	*tea.Program
 	*yaq.Base
 	pen        *Pen
@@ -32,8 +32,6 @@ type Game struct {
 	levelIndex int
 	loaded     bool
 }
-
-type errMsg = error
 
 func (g *Game) Init() tea.Cmd {
 	err := g.load()
@@ -54,7 +52,7 @@ func (g *Game) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	}
 
 	switch msg := msg.(type) {
-	case errMsg:
+	case common.ErrMsg:
 		g.err = msg
 		g.state = common.Failed
 		return g, nil
@@ -133,7 +131,7 @@ func (g *Game) loadCurrentLevel() error {
 		return nil
 	}
 
-	g.currentLevel = &level{Game: g}
+	g.currentLevel = &Level{Game: g}
 	data, err := os.ReadFile(filepath.Join(g.CfgPath, g.Levels[g.levelIndex]+common.TomlExt))
 	if err != nil {
 		return err

@@ -34,6 +34,6 @@ func DownRight(steps int) {
 	Instance.player.DownRight(steps)
 }
 
-func GetSprite(y, x, i int) *sprite {
+func GetSprite(y, x, i int) *Sprite {
 	return Instance.currentLevel().grid[y][x][i]
 }

@@ -8,7 +8,7 @@ import (
 	"github.com/zrcoder/yaq/common"
 )
 
-type level struct {
+type Level struct {
 	*Game
 	Layout     string `toml:"layout"`
 	Code       string `toml:"code"`
@@ -18,7 +18,7 @@ type level struct {
 	Grid       [][]*Block
 }
 
-func (l *level) initialize() error {
+func (l *Level) initialize() error {
 	l.Grid = make([][]*Block, l.Rows)
 	for i := range l.Grid {
 		l.Grid[i] = make([]*Block, l.Columns)
@@ -63,7 +63,7 @@ func (l *level) initialize() error {
 	return nil
 }
 
-func (l *level) View() string {
+func (l *Level) View() string {
 	buf := strings.Builder{}
 	for y, row := range l.Grid {
 		for x, sp := range row {

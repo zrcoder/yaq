@@ -44,6 +44,10 @@ func (b *Base) SucceedView(msg string) string {
 	return dialog.Success(msg).Height(b.height).Width(b.width).String()
 }
 
+func (b *Base) SucceedViewWithStars(msg string, total, stars int) string {
+	return dialog.Success(msg).Height(b.height).Width(b.width).Stars(total, stars).String()
+}
+
 func (b *Base) LoadingView() string {
 	return dialog.Success("loading...").Height(b.height).Width(b.width).String()
 }
