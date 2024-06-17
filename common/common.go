@@ -7,8 +7,8 @@ import (
 )
 
 const (
-	IndexFile = "index.toml"
-	TomlExt   = ".toml"
+	IndexFile = "index.yaml"
+	YamlExt   = ".yaml"
 )
 
 type State = string

@@ -5,7 +5,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/pelletier/go-toml/v2"
+	"gopkg.in/yaml.v3"
 
 	"github.com/zrcoder/yaq/common"
 )
@@ -14,7 +14,7 @@ func Run(path string) {
 	base := &Base{CfgPath: path}
 	data, err := os.ReadFile(filepath.Join(path, common.IndexFile))
 	fatalIfError(err)
-	err = toml.Unmarshal(data, base)
+	err = yaml.Unmarshal(data, base)
 	fatalIfError(err)
 	game, err := get(base.Mode)
 	fatalIfError(err)

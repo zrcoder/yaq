@@ -13,10 +13,10 @@ import (
 type Level struct {
 	*Scene
 	preCode    string
-	Layout     string `toml:"layout"`
-	Code       string `toml:"code"`
-	Hint       string `toml:"hint"`
-	SuccessMsg string `toml:"successMsg"`
+	Layout     string `yaml:"layout"`
+	Code       string `yaml:"code"`
+	Hint       string `yaml:"hint"`
+	SuccessMsg string `yaml:"successMsg"`
 	name       string
 	grid       [][][]*Sprite
 	helpItems  []*Sprite

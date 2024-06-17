@@ -5,21 +5,19 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/pelletier/go-toml/v2"
 	"github.com/zrcoder/yaq/common"
+	"gopkg.in/yaml.v3"
 )
-
-const tomlExt = ".toml"
 
 type Scene struct {
 	*Game
-	Sprites    map[string]*Sprite `toml:"sprites"`
+	Sprites    map[string]*Sprite `yaml:"sprites"`
 	name       string
 	bgColors   [2]string
-	BgColor1   string   `toml:"bgColor1"`
-	BgColor2   string   `toml:"bgColor2"`
-	LevelNames []string `toml:"levels"`
-	levels     []*Level `toml:"_"`
+	BgColor1   string   `yaml:"bgColor1"`
+	BgColor2   string   `yaml:"bgColor2"`
+	LevelNames []string `yaml:"levels"`
+	levels     []*Level `yaml:"_"`
 	levelIndex int
 }
 
@@ -31,9 +29,9 @@ func (s *Scene) loadLevels() error {
 	s.levels = make([]*Level, len(s.LevelNames))
 	for i, name := range s.LevelNames {
 		l := &Level{}
-		if data, err := os.ReadFile(filepath.Join(s.CfgPath, s.name, name+tomlExt)); err != nil {
+		if data, err := os.ReadFile(filepath.Join(s.CfgPath, s.name, name+common.YamlExt)); err != nil {
 			return err
-		} else if err := toml.Unmarshal(data, l); err != nil {
+		} else if err := yaml.Unmarshal(data, l); err != nil {
 			return err
 		}
 		l.name = name
@@ -48,9 +46,9 @@ func (s *Scene) loadCurrentLevel() error {
 	if len(s.levels) == 0 {
 		return fmt.Errorf("no levels found for scend %s", s.name)
 	}
-	if data, err := os.ReadFile(filepath.Join(s.CfgPath, s.name, s.levels[s.levelIndex].name+tomlExt)); err != nil {
+	if data, err := os.ReadFile(filepath.Join(s.CfgPath, s.name, s.levels[s.levelIndex].name+common.YamlExt)); err != nil {
 		return err
-	} else if err := toml.Unmarshal(data, s.currentLevel()); err != nil {
+	} else if err := yaml.Unmarshal(data, s.currentLevel()); err != nil {
 		return err
 	}
 	return s.currentLevel().initialize()

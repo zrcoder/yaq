@@ -9,11 +9,11 @@ import (
 type Base struct {
 	Editor    textarea.Model
 	CfgPath   string
-	Name      string `toml:"name"`
-	Mode      string `toml:"mode"`
+	Name      string `yaml:"name"`
+	Mode      string `yaml:"mode"`
 	IndexData []byte
-	Rows      int `toml:"rows"`
-	Columns   int `toml:"columns"`
+	Rows      int `yaml:"rows"`
+	Columns   int `yaml:"columns"`
 	height    int
 	width     int
 	Keys      KeyMap

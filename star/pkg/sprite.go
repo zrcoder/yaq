@@ -14,18 +14,18 @@ type Sprite struct {
 	*Scene
 	*common.Position
 	key       string
-	Name      string `toml:"name"`
-	Group     string `toml:"group"`
-	Display   string `toml:"display"`
-	Color     string `toml:"color"`
-	BgColor   string `toml:"bgColor"`
-	Foods     string `toml:"foods"`
-	Forbbiden string `toml:"forbbiden"`
-	Freinds   string `toml:"freinds"`
-	Sprites   string `toml:"sprites"`
+	Name      string `yaml:"name"`
+	Group     string `yaml:"group"`
+	Display   string `yaml:"display"`
+	Color     string `yaml:"color"`
+	BgColor   string `yaml:"bgColor"`
+	Foods     string `yaml:"foods"`
+	Forbbiden string `yaml:"forbbiden"`
+	Freinds   string `yaml:"freinds"`
+	Sprites   string `yaml:"sprites"`
 	count     int
-	IsPlayer  bool `toml:"isPlayer"`
-	CanMove   bool `toml:"canMove"`
+	IsPlayer  bool `yaml:"isPlayer"`
+	CanMove   bool `yaml:"canMove"`
 }
 
 func (s *Sprite) Up(steps int) {

@@ -9,7 +9,7 @@ import (
 	"github.com/charmbracelet/bubbles/textarea"
 	tea "github.com/charmbracelet/bubbletea"
 	lp "github.com/charmbracelet/lipgloss"
-	"github.com/pelletier/go-toml/v2"
+	"gopkg.in/yaml.v3"
 
 	"github.com/zrcoder/rdor/pkg/dialog"
 	"github.com/zrcoder/rdor/pkg/style"
@@ -26,8 +26,8 @@ type Game struct {
 	player      *Sprite
 	successInfo string
 	state       common.State
-	scenes      []*Scene `toml:"_"`
-	SceneNames  []string `toml:"scenes"`
+	scenes      []*Scene `yaml:"_"`
+	SceneNames  []string `yaml:"scenes"`
 	sceneIndex  int
 	totalStars  int
 	loaded      bool
@@ -115,7 +115,7 @@ func (g *Game) MarkResult() {
 }
 
 func (g *Game) load() error {
-	if err := toml.Unmarshal(g.IndexData, g); err != nil {
+	if err := yaml.Unmarshal(g.IndexData, g); err != nil {
 		return err
 	}
 	return g.loadScenes()
@@ -132,7 +132,7 @@ func (g *Game) loadScenes() error {
 		path := filepath.Join(g.CfgPath, name, common.IndexFile)
 		if data, err := os.ReadFile(path); err != nil {
 			return err
-		} else if err = toml.Unmarshal(data, s); err != nil {
+		} else if err = yaml.Unmarshal(data, s); err != nil {
 			return err
 		}
 		s.Game = g

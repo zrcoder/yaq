@@ -10,10 +10,10 @@ import (
 
 type Level struct {
 	*Game
-	Layout     string `toml:"layout"`
-	Code       string `toml:"code"`
-	Hint       string `toml:"hint"`
-	SuccessMsg string `toml:"successMsg"`
+	Layout     string `yaml:"layout"`
+	Code       string `yaml:"code"`
+	Hint       string `yaml:"hint"`
+	SuccessMsg string `yaml:"successMsg"`
 	Name       string
 	Grid       [][]*Block
 }

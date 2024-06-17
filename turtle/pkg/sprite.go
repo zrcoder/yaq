@@ -8,14 +8,14 @@ import (
 )
 
 type Sprite struct {
-	*Pen    `toml:"pen"`
-	*Block  `toml:"block"`
-	IsPen   bool   `toml:"isPen"`
-	Sprites string `toml:"sprites"`
+	*Pen    `yaml:"pen"`
+	*Block  `yaml:"block"`
+	IsPen   bool   `yaml:"isPen"`
+	Sprites string `yaml:"sprites"`
 }
 
 type Block struct {
-	BgColor string `toml:"bgColor"`
+	BgColor string `yaml:"bgColor"`
 	filled  bool
 }
 
@@ -26,9 +26,9 @@ func newBlock(color string) *Block {
 type Pen struct {
 	*Game
 	*common.Position
-	Color   string `toml:"color"`
-	Display string `toml:"display"`
-	IsUp    bool   `toml:"isUp"`
+	Color   string `yaml:"color"`
+	Display string `yaml:"display"`
+	IsUp    bool   `yaml:"isUp"`
 }
 
 func (p *Pen) setStateUp(up bool) {

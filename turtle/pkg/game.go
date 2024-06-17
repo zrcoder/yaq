@@ -9,11 +9,11 @@ import (
 	"github.com/charmbracelet/bubbles/textarea"
 	tea "github.com/charmbracelet/bubbletea"
 	lp "github.com/charmbracelet/lipgloss"
-	"github.com/pelletier/go-toml/v2"
 	"github.com/zrcoder/rdor/pkg/dialog"
 	"github.com/zrcoder/rdor/pkg/style"
 	"github.com/zrcoder/yaq"
 	"github.com/zrcoder/yaq/common"
+	"gopkg.in/yaml.v3"
 )
 
 var Instance = &Game{}
@@ -24,9 +24,9 @@ type Game struct {
 	*tea.Program
 	*yaq.Base
 	pen        *Pen
-	Name       string             `toml:"name"`
-	Sprites    map[string]*Sprite `toml:"sprites"`
-	Levels     []string           `toml:"levels"`
+	Name       string             `yaml:"name"`
+	Sprites    map[string]*Sprite `yaml:"sprites"`
+	Levels     []string           `yaml:"levels"`
 	state      common.State
 	totalPoses int
 	levelIndex int
@@ -119,7 +119,7 @@ func (g *Game) MarkResult() {
 }
 
 func (g *Game) load() error {
-	return toml.Unmarshal(g.IndexData, g)
+	return yaml.Unmarshal(g.IndexData, g)
 }
 
 func (g *Game) loadCurrentLevel() error {
@@ -132,11 +132,11 @@ func (g *Game) loadCurrentLevel() error {
 	}
 
 	g.currentLevel = &Level{Game: g}
-	data, err := os.ReadFile(filepath.Join(g.CfgPath, g.Levels[g.levelIndex]+common.TomlExt))
+	data, err := os.ReadFile(filepath.Join(g.CfgPath, g.Levels[g.levelIndex]+common.YamlExt))
 	if err != nil {
 		return err
 	}
-	err = toml.Unmarshal(data, g.currentLevel)
+	err = yaml.Unmarshal(data, g.currentLevel)
 	if err != nil {
 		return err
 	}

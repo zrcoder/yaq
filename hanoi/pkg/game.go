@@ -9,9 +9,9 @@ import (
 	"github.com/charmbracelet/bubbles/textarea"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
-	"github.com/pelletier/go-toml/v2"
 	"github.com/zrcoder/rdor/pkg/style/color"
 	"github.com/zrcoder/yaq/common"
+	"gopkg.in/yaml.v3"
 
 	"github.com/zrcoder/yaq"
 )
@@ -30,8 +30,8 @@ type Game struct {
 	*tea.Program
 	currentLevel *Level
 	err          error
-	Name         string   `toml:"name"`
-	Levels       []string `toml:"levels"`
+	Name         string   `yaml:"name"`
+	Levels       []string `yaml:"levels"`
 	diskStyles   []lipgloss.Style
 	pileWidth    int
 	levelIndex   int
@@ -92,7 +92,7 @@ func (g *Game) gotoNextLevel() {
 }
 
 func (g *Game) load() error {
-	err := toml.Unmarshal(g.IndexData, g)
+	err := yaml.Unmarshal(g.IndexData, g)
 	if err != nil {
 		return err
 	}
@@ -107,12 +107,12 @@ func (g *Game) loadCurrentLevel() error {
 	if g.allLevelsFinished() {
 		return errors.New("all levels finised")
 	}
-	data, err := os.ReadFile(filepath.Join(g.CfgPath, g.Levels[g.levelIndex]+common.TomlExt))
+	data, err := os.ReadFile(filepath.Join(g.CfgPath, g.Levels[g.levelIndex]+common.YamlExt))
 	if err != nil {
 		return err
 	}
 	g.currentLevel = &Level{}
-	err = toml.Unmarshal(data, g.currentLevel)
+	err = yaml.Unmarshal(data, g.currentLevel)
 	if err != nil {
 		return err
 	}
