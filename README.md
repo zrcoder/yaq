@@ -9,9 +9,17 @@ A terminal game engine for learning programming, inspired by [spx](https://githu
 
 ## Install
 
-```shell
+If go < 1.23
+
+```sh
 go install github.com/zrcoder/yaq/cmd/yaq@latest
 ```
+
+Else
+```sh
+go install -ldflags="-checklinkname=0" github.com/zrcoder/yaq/cmd/yaq@latest
+```
+
 
 ## Usage
 
