@@ -4,7 +4,7 @@ import (
 	"log"
 
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/goplus/igop"
+	"github.com/goplus/ixgo"
 
 	"github.com/zrcoder/yaq"
 	"github.com/zrcoder/yaq/common"
@@ -49,7 +49,7 @@ func (t *turtle) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 func (s *turtle) runCode() {
 	preCode := `import . "github.com/zrcoder/yaq/turtle/pkg"` + "\n"
 	go func(code string) {
-		_, err := igop.RunFile("main.gop", code, nil, 0)
+		_, err := ixgo.RunFile("main.gop", code, nil, 0)
 		if err != nil {
 			err = common.ParseBuildError(err, preCode)
 			s.Send(err)

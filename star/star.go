@@ -4,8 +4,8 @@ import (
 	"log"
 
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/goplus/igop"
-	_ "github.com/goplus/igop/gopbuild"
+	"github.com/goplus/ixgo"
+	_ "github.com/goplus/ixgo/xgobuild"
 
 	"github.com/zrcoder/yaq"
 	"github.com/zrcoder/yaq/common"
@@ -54,7 +54,7 @@ func (s *star) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 func (s *star) runCode() {
 	go func(code string) {
-		_, err := igop.RunFile("main.gop", code, nil, 0)
+		_, err := ixgo.RunFile("main.gop", code, nil, 0)
 		if err != nil {
 			err = common.ParseBuildError(err, s.PreCode())
 			s.Send(err)

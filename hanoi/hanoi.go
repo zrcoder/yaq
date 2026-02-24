@@ -4,7 +4,7 @@ import (
 	"log"
 
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/goplus/igop"
+	"github.com/goplus/ixgo"
 
 	"github.com/zrcoder/yaq"
 	"github.com/zrcoder/yaq/common"
@@ -52,7 +52,7 @@ func (h *hanoi) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 func (h *hanoi) runCode() {
 	precode := `import . "github.com/zrcoder/yaq/hanoi/pkg"` + "\n"
 	go func(code string) {
-		_, err := igop.RunFile("main.gop", code, nil, 0)
+		_, err := ixgo.RunFile("main.gop", code, nil, 0)
 		if err != nil {
 			err = common.ParseBuildError(err, precode)
 			h.Send(err)

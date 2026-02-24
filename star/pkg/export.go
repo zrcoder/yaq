@@ -1,4 +1,4 @@
-//go:generate igop export -outdir ../../exported .
+//go:generate go tool qexp -outdir ../../exported .
 
 package pkg
 
