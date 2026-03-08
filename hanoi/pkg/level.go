@@ -5,8 +5,8 @@ import (
 	"strings"
 	"time"
 
-	tea "github.com/charmbracelet/bubbletea"
-	lp "github.com/charmbracelet/lipgloss"
+	tea "charm.land/bubbletea/v2"
+	lp "charm.land/lipgloss/v2"
 	"github.com/zrcoder/rdor/pkg/style"
 	"github.com/zrcoder/yaq/common"
 )
@@ -69,7 +69,7 @@ func (l *Level) update(msg tea.Msg) tea.Cmd {
 	return cmd
 }
 
-func (l *Level) view() string {
+func (l *Level) view() tea.View {
 	title := fmt.Sprintf("%s > %s", l.Name, l.name)
 	title += style.Help.Render(fmt.Sprintf("\tsteps: %d", l.steps))
 	l.buf.Reset()
@@ -89,7 +89,7 @@ func (l *Level) view() string {
 	case common.Succeed:
 		mainView = l.SucceedViewWithStars(l.successInfo, totalStars, l.earnedStars)
 	case common.Failed:
-		mainView = l.ErrorView("failed")
+		mainView = l.ErrorView("failed").Content
 	}
 
 	leftView := lp.JoinVertical(lp.Left,
@@ -99,9 +99,11 @@ func (l *Level) view() string {
 	rightView := lp.JoinVertical(lp.Left,
 		style.Help.Render(l.Hint), "",
 		l.Editor.View(), "",
-		l.KeysView(),
+		l.KeysView().Content,
 	)
-	return lp.JoinHorizontal(lp.Top, leftView, "     ", rightView)
+	view := tea.NewView(lp.JoinHorizontal(lp.Top, leftView, "     ", rightView))
+	view.AltScreen = true
+	return view
 }
 
 func (l *Level) writePoles() {

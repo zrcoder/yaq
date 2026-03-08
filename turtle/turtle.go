@@ -3,7 +3,7 @@ package turtle
 import (
 	"log"
 
-	tea "github.com/charmbracelet/bubbletea"
+	tea "charm.land/bubbletea/v2"
 	"github.com/goplus/ixgo"
 
 	"github.com/zrcoder/yaq"
@@ -24,7 +24,7 @@ func (t *turtle) SetBase(base *yaq.Base) {
 
 func (t *turtle) Run() {
 	t.Base.SetSceneSize(t.Rows, t.Columns*3)
-	p := tea.NewProgram(t, tea.WithAltScreen())
+	p := tea.NewProgram(t)
 	t.Program = p
 	if _, err := p.Run(); err != nil {
 		log.Fatal(err)
@@ -34,10 +34,10 @@ func (t *turtle) Run() {
 func (t *turtle) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
-		switch msg.Type {
-		case tea.KeyCtrlC:
+		switch msg.String() {
+		case "ctrl+c":
 			return t, tea.Quit
-		case tea.KeyCtrlR:
+		case "ctrl+r":
 			go t.runCode()
 		}
 	}

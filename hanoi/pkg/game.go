@@ -6,9 +6,9 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/charmbracelet/bubbles/textarea"
-	tea "github.com/charmbracelet/bubbletea"
-	"github.com/charmbracelet/lipgloss"
+	"charm.land/bubbles/v2/textarea"
+	tea "charm.land/bubbletea/v2"
+	"charm.land/lipgloss/v2"
 	"github.com/zrcoder/rdor/pkg/style/color"
 	"github.com/zrcoder/yaq/common"
 	"gopkg.in/yaml.v3"
@@ -68,7 +68,7 @@ func (g *Game) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	return g, g.currentLevel.update(msg)
 }
 
-func (g *Game) View() string {
+func (g *Game) View() tea.View {
 	if g.err != nil {
 		return g.ErrorView(g.err.Error())
 	}

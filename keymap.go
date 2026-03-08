@@ -1,6 +1,6 @@
 package yaq
 
-import "github.com/charmbracelet/bubbles/key"
+import "charm.land/bubbles/v2/key"
 
 type KeyMap struct {
 	Quit key.Binding

@@ -6,9 +6,9 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/charmbracelet/bubbles/textarea"
-	tea "github.com/charmbracelet/bubbletea"
-	lp "github.com/charmbracelet/lipgloss"
+	"charm.land/bubbles/v2/textarea"
+	tea "charm.land/bubbletea/v2"
+	lp "charm.land/lipgloss/v2"
 	"gopkg.in/yaml.v3"
 
 	"github.com/zrcoder/rdor/pkg/dialog"
@@ -73,9 +73,9 @@ func (g *Game) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	return g, cmd
 }
 
-func (g *Game) View() string {
+func (g *Game) View() tea.View {
 	if g.allFinished() {
-		return dialog.Success("all challenges finished!").String()
+		return tea.NewView(dialog.Success("all challenges finished!").String())
 	}
 
 	title := fmt.Sprintf("%s > %s > %s", g.Name, g.currentScene().name, g.currentLevel().name)
@@ -83,13 +83,13 @@ func (g *Game) View() string {
 	leftView := ""
 	switch {
 	case g.err != nil:
-		leftView = g.ErrorView(g.err.Error())
+		leftView = g.ErrorView(g.err.Error()).Content
 	case !g.loaded:
-		leftView = g.LoadingView()
+		leftView = g.LoadingView().Content
 	case g.state == common.Succeed:
 		leftView = g.SucceedView(g.successInfo)
 	case g.state == common.Failed:
-		leftView = g.ErrorView("failed")
+		leftView = g.ErrorView("failed").Content
 	default:
 		leftView = g.currentLevel().view()
 	}
@@ -97,8 +97,10 @@ func (g *Game) View() string {
 	rightView := lp.JoinVertical(lp.Left,
 		style.Help.Render(g.currentLevel().Hint), "",
 		g.Editor.View(), "",
-		g.KeysView())
-	return lp.JoinHorizontal(lp.Top, leftView, "  ", rightView)
+		g.KeysView().Content)
+	view := tea.NewView(lp.JoinHorizontal(lp.Top, leftView, "  ", rightView))
+	view.AltScreen = true
+	return view
 }
 
 func (g *Game) PreCode() string {

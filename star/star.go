@@ -3,7 +3,7 @@ package star
 import (
 	"log"
 
-	tea "github.com/charmbracelet/bubbletea"
+	tea "charm.land/bubbletea/v2"
 	"github.com/goplus/ixgo"
 	_ "github.com/goplus/ixgo/xgobuild"
 
@@ -30,7 +30,7 @@ func (s *star) SetBase(base *yaq.Base) {
 
 func (s *star) Run() {
 	s.SetSceneSize(s.Rows, s.Columns*3)
-	p := tea.NewProgram(s, tea.WithAltScreen())
+	p := tea.NewProgram(s)
 	s.Program = p
 	if _, err := p.Run(); err != nil {
 		log.Fatal(err)
@@ -40,10 +40,10 @@ func (s *star) Run() {
 func (s *star) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
-		switch msg.Type {
-		case tea.KeyCtrlC:
+		switch msg.String() {
+		case "ctrl+c":
 			return s, tea.Quit
-		case tea.KeyCtrlR:
+		case "ctrl+r":
 			s.runCode()
 		}
 	}

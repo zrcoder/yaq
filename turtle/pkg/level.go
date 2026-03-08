@@ -4,7 +4,7 @@ import (
 	"errors"
 	"strings"
 
-	lp "github.com/charmbracelet/lipgloss"
+	lp "charm.land/lipgloss/v2"
 	"github.com/zrcoder/yaq/common"
 )
 

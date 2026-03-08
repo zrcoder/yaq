@@ -3,7 +3,7 @@ package hanoi
 import (
 	"log"
 
-	tea "github.com/charmbracelet/bubbletea"
+	tea "charm.land/bubbletea/v2"
 	"github.com/goplus/ixgo"
 
 	"github.com/zrcoder/yaq"
@@ -27,7 +27,7 @@ func (h *hanoi) SetBase(base *yaq.Base) {
 
 func (h *hanoi) Run() {
 	h.SetSceneSize(20, 60)
-	p := tea.NewProgram(h, tea.WithAltScreen())
+	p := tea.NewProgram(h)
 	h.Program = p
 	if _, err := p.Run(); err != nil {
 		log.Fatal(err)
@@ -36,11 +36,11 @@ func (h *hanoi) Run() {
 
 func (h *hanoi) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
-	case tea.KeyMsg:
-		switch msg.Type {
-		case tea.KeyCtrlC:
+	case tea.KeyPressMsg:
+		switch msg.String() {
+		case "ctrl+c":
 			return h, tea.Quit
-		case tea.KeyCtrlR:
+		case "ctrl+r":
 			h.runCode()
 		}
 	}
