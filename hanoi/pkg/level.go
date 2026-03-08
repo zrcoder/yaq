@@ -89,7 +89,7 @@ func (l *Level) view() tea.View {
 	case common.Succeed:
 		mainView = l.SucceedViewWithStars(l.successInfo, totalStars, l.earnedStars)
 	case common.Failed:
-		mainView = l.ErrorView("failed").Content
+		mainView = l.ErrorView("failed")
 	}
 
 	leftView := lp.JoinVertical(lp.Left,
@@ -99,7 +99,7 @@ func (l *Level) view() tea.View {
 	rightView := lp.JoinVertical(lp.Left,
 		style.Help.Render(l.Hint), "",
 		l.Editor.View(), "",
-		l.KeysView().Content,
+		l.KeysView(),
 	)
 	view := tea.NewView(lp.JoinHorizontal(lp.Top, leftView, "     ", rightView))
 	view.AltScreen = true

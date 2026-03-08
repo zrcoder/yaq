@@ -69,11 +69,15 @@ func (g *Game) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (g *Game) View() tea.View {
+	view := tea.NewView("")
+	view.AltScreen = true
 	if g.err != nil {
-		return g.ErrorView(g.err.Error())
+		view.Content = g.ErrorView(g.err.Error())
+		return view
 	}
 	if g.currentLevel == nil {
-		return g.LoadingView()
+		view.Content = g.LoadingView()
+		return view
 	}
 	return g.currentLevel.view()
 }
@@ -123,10 +127,6 @@ func (g *Game) loadCurrentLevel() error {
 
 func (g *Game) allLevelsFinished() bool {
 	return g.levelIndex == len(g.Levels)
-}
-
-func (g *Game) helpInfo() string {
-	return "Our goal is to move all disks from pile `1` to pile `3`."
 }
 
 func (g *Game) shuffleDiskStyles() {

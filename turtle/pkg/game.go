@@ -84,13 +84,13 @@ func (g *Game) View() tea.View {
 	leftView := ""
 	switch {
 	case g.err != nil:
-		leftView = g.ErrorView(g.err.Error()).Content
+		leftView = g.ErrorView(g.err.Error())
 	case !g.loaded:
-		leftView = g.LoadingView().Content
+		leftView = g.LoadingView()
 	case g.state == common.Succeed:
 		leftView = g.SucceedView("Well done")
 	case g.state == common.Failed:
-		leftView = g.ErrorView("failed").Content
+		leftView = g.ErrorView("failed")
 	default:
 		leftView = g.currentLevel.View()
 	}
@@ -105,7 +105,7 @@ func (g *Game) View() tea.View {
 	rightView := lp.JoinVertical(lp.Left,
 		hintView, "",
 		g.Editor.View(), "",
-		g.KeysView().Content)
+		g.KeysView())
 	view := tea.NewView(lp.JoinHorizontal(lp.Top, leftView, "   ", rightView))
 	view.AltScreen = true
 	return view
