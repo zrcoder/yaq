@@ -47,11 +47,11 @@ func (p *Position) Transform(d Direction) Position {
 
 func ParseBuildError(err error, preCode string) error {
 	msg := err.Error()
-	i := strings.Index(msg, " ")
-	if i == -1 {
+	before, after, ok := strings.Cut(msg, " ")
+	if !ok {
 		return err
 	}
-	pre, post := msg[:i], msg[i+1:]
+	pre, post := before, after
 	arr := strings.SplitN(pre, ":", 3)
 	if len(arr) < 2 {
 		return err

@@ -97,13 +97,7 @@ func (s *Sprite) step(dir common.Direction) error {
 	if !canCross {
 		return fmt.Errorf("can't cross %s", name)
 	}
-	playerMoving := false
-	for _, sp := range srcSps {
-		if sp == s.player {
-			playerMoving = true
-			break
-		}
-	}
+	playerMoving := slices.Contains(srcSps, s.player)
 	if playerMoving && len(dstSps) > 0 {
 		n := len(dstSps)
 		top := dstSps[n-1]
