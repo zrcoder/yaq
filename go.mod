@@ -8,10 +8,12 @@ require (
 	charm.land/lipgloss/v2 v2.0.3
 	github.com/goplus/ixgo v1.0.8
 	github.com/zrcoder/rdor v0.2.3
+	github.com/zrcoder/vtea v0.0.6
 	gopkg.in/yaml.v3 v3.0.1
 )
 
 require (
+	github.com/alecthomas/chroma/v2 v2.24.1 // indirect
 	github.com/atotto/clipboard v0.1.4 // indirect
 	github.com/charmbracelet/colorprofile v0.4.3 // indirect
 	github.com/charmbracelet/ultraviolet v0.0.0-20260428153724-66037269d7be // indirect
@@ -21,6 +23,7 @@ require (
 	github.com/charmbracelet/x/windows v0.2.2 // indirect
 	github.com/clipperhouse/displaywidth v0.11.0 // indirect
 	github.com/clipperhouse/uax29/v2 v2.7.0 // indirect
+	github.com/dlclark/regexp2 v1.12.0 // indirect
 	github.com/goplus/gogen v1.23.0-pre.3.0.20260414234848-6641c10c9d6f // indirect
 	github.com/goplus/mod v0.20.2 // indirect
 	github.com/goplus/reflectx v1.6.4 // indirect
@@ -34,10 +37,14 @@ require (
 	github.com/visualfc/funcval v0.1.4 // indirect
 	github.com/visualfc/xtype v0.3.0 // indirect
 	github.com/xo/terminfo v0.0.0-20220910002029-abceb7e1c41e // indirect
-	golang.org/x/mod v0.35.0 // indirect
+	golang.design/x/clipboard v0.7.1 // indirect
+	golang.org/x/exp/shiny v0.0.0-20260508232706-74f9aab9d74a // indirect
+	golang.org/x/image v0.40.0 // indirect
+	golang.org/x/mobile v0.0.0-20260508232728-bebd421c7fa8 // indirect
+	golang.org/x/mod v0.36.0 // indirect
 	golang.org/x/sync v0.20.0 // indirect
-	golang.org/x/sys v0.43.0 // indirect
-	golang.org/x/tools v0.44.0 // indirect
+	golang.org/x/sys v0.44.0 // indirect
+	golang.org/x/tools v0.45.0 // indirect
 )
 
 tool github.com/goplus/ixgo/cmd/qexp

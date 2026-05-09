@@ -1,9 +1,10 @@
 package pkg
 
 import (
+	"cmp"
 	"errors"
 	"fmt"
-	"sort"
+	"slices"
 	"strings"
 
 	lp "charm.land/lipgloss/v2"
@@ -86,7 +87,7 @@ func (l *Level) calculate() error {
 				return fmt.Errorf("no group name for sprite: %s", sp.key)
 			}
 			helpMap[sp.key] = sp
-			buf.WriteString(fmt.Sprintf("var %s = make([]*Sprite, 0, %d)\n", sp.Group, sp.count))
+			fmt.Fprintf(&buf, "var %s = make([]*Sprite, 0, %d)\n", sp.Group, sp.count)
 		}
 	}
 	appendBuf := strings.Builder{}
@@ -98,9 +99,9 @@ func (l *Level) calculate() error {
 						return fmt.Errorf("no name for sprite: %s", sp.key)
 					}
 					helpMap[sp.key] = sp
-					buf.WriteString(fmt.Sprintf("var %s = GetSprite(%d, %d, %d)\n", sp.Name, y, x, i))
+					fmt.Fprintf(&buf, "var %s = GetSprite(%d, %d, %d)\n", sp.Name, y, x, i)
 				} else if l.Sprites[sp.key].count > 1 {
-					appendBuf.WriteString(fmt.Sprintf("%s = append(%s, GetSprite(%d, %d, %d))\n", sp.Group, sp.Group, y, x, i))
+					fmt.Fprintf(&appendBuf, "%s = append(%s, GetSprite(%d, %d, %d))\n", sp.Group, sp.Group, y, x, i)
 				}
 				if strings.Contains(l.player.Foods, sp.key) {
 					l.totalStars++
@@ -114,7 +115,7 @@ func (l *Level) calculate() error {
 	}
 	l.preCode = buf.String() + "\n" + appendBuf.String()
 	l.Editor.SetValue(strings.TrimRight(l.Code, "\n"))
-	sort.Slice(l.helpItems, func(i, j int) bool { return l.helpItems[i].Name < l.helpItems[j].Name })
+	slices.SortFunc(l.helpItems, func(a, b *Sprite) int { return cmp.Compare(a.Name, b.Name) })
 	l.loaded = true
 	return nil
 }

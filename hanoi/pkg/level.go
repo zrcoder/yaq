@@ -7,7 +7,6 @@ import (
 
 	tea "charm.land/bubbletea/v2"
 	lp "charm.land/lipgloss/v2"
-	"github.com/zrcoder/rdor/pkg/style"
 	"github.com/zrcoder/yaq/common"
 )
 
@@ -69,41 +68,26 @@ func (l *Level) update(msg tea.Msg) tea.Cmd {
 	return cmd
 }
 
-func (l *Level) view() tea.View {
-	title := fmt.Sprintf("%s > %s", l.Name, l.name)
-	title += style.Help.Render(fmt.Sprintf("\tsteps: %d", l.steps))
+func (l *Level) view() string {
 	l.buf.Reset()
 	l.writePoles()
 
-	mainView := ""
 	switch l.state {
 	case common.Running:
 		views := make([]string, len(l.piles))
 		for i, p := range l.piles {
 			views[i] = p.view()
 		}
-		mainView = lp.JoinVertical(lp.Center,
+		return lp.JoinVertical(lp.Center,
 			views[2],
 			lp.JoinHorizontal(lp.Top, views[0], views[1]),
 		)
 	case common.Succeed:
-		mainView = l.SucceedViewWithStars(l.successInfo, totalStars, l.earnedStars)
+		return l.SucceedViewWithStars(l.successInfo, totalStars, l.earnedStars)
 	case common.Failed:
-		mainView = l.ErrorView("failed")
+		return l.ErrorView("failed")
 	}
-
-	leftView := lp.JoinVertical(lp.Left,
-		title,
-		mainView,
-	)
-	rightView := lp.JoinVertical(lp.Left,
-		style.Help.Render(l.Hint), "",
-		l.Editor.View(), "",
-		l.KeysView(),
-	)
-	view := tea.NewView(lp.JoinHorizontal(lp.Top, leftView, "     ", rightView))
-	view.AltScreen = true
-	return view
+	return ""
 }
 
 func (l *Level) writePoles() {
@@ -158,9 +142,19 @@ func (l *Level) pick(i int) {
 	if l.overDisk == nil && curPile.empty() {
 		return
 	}
+
+	sleepDuration := time.Duration(0)
+	defer func() {
+		if sleepDuration > 0 {
+			l.Send(common.MoveMsg{})
+			time.Sleep(sleepDuration)
+		}
+	}()
+
 	if l.overDisk == nil {
 		curPile.overOne = true
 		l.overDisk = curPile.top()
+		sleepDuration = 200 * time.Millisecond
 		return
 	}
 	if !curPile.empty() && l.overDisk.id > curPile.top().id {
@@ -170,6 +164,7 @@ func (l *Level) pick(i int) {
 	if !curPile.empty() && l.overDisk == curPile.top() {
 		curPile.overOne = false
 		l.overDisk = nil
+		sleepDuration = 200 * time.Millisecond
 		return
 	}
 	for _, p := range l.piles {
@@ -180,7 +175,7 @@ func (l *Level) pick(i int) {
 			l.overDisk = nil
 		}
 	}
-	time.Sleep(500 * time.Millisecond)
+	sleepDuration = 500 * time.Millisecond
 }
 
 func (l *Level) success() bool {

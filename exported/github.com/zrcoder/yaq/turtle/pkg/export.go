@@ -32,11 +32,11 @@ func init() {
 		},
 		Interfaces: map[string]reflect.Type{},
 		NamedTypes: map[string]reflect.Type{
-			"Block":  reflect.TypeOf((*q.Block)(nil)).Elem(),
-			"Game":   reflect.TypeOf((*q.Game)(nil)).Elem(),
-			"Level":  reflect.TypeOf((*q.Level)(nil)).Elem(),
-			"Pen":    reflect.TypeOf((*q.Pen)(nil)).Elem(),
-			"Sprite": reflect.TypeOf((*q.Sprite)(nil)).Elem(),
+			"Block":  reflect.TypeFor[q.Block](),
+			"Game":   reflect.TypeFor[q.Game](),
+			"Level":  reflect.TypeFor[q.Level](),
+			"Pen":    reflect.TypeFor[q.Pen](),
+			"Sprite": reflect.TypeFor[q.Sprite](),
 		},
 		AliasTypes: map[string]reflect.Type{},
 		Vars: map[string]reflect.Value{

@@ -106,9 +106,7 @@ func (g *Game) View() tea.View {
 		hintView, "",
 		g.Editor.View(), "",
 		g.KeysView())
-	view := tea.NewView(lp.JoinHorizontal(lp.Top, leftView, "   ", rightView))
-	view.AltScreen = true
-	return view
+	return g.Base.View(leftView, rightView)
 }
 
 func (g *Game) MarkResult() {

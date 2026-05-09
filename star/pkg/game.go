@@ -37,8 +37,7 @@ func (g *Game) Init() tea.Cmd {
 	if err := g.load(); err != nil {
 		return func() tea.Msg { return err }
 	}
-	g.Editor.SetHeight(g.Rows)
-	g.Editor.SetWidth(g.Columns * 3)
+	g.Editor.SetSize(g.Columns*3, g.Rows)
 	return textarea.Blink
 }
 
@@ -98,9 +97,7 @@ func (g *Game) View() tea.View {
 		style.Help.Render(g.currentLevel().Hint), "",
 		g.Editor.View(), "",
 		g.KeysView())
-	view := tea.NewView(lp.JoinHorizontal(lp.Top, leftView, "  ", rightView))
-	view.AltScreen = true
-	return view
+	return g.Base.View(leftView, rightView)
 }
 
 func (g *Game) PreCode() string {

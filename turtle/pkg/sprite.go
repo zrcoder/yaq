@@ -82,6 +82,7 @@ func (p *Pen) move(steps int, dir common.Direction) {
 			return
 		}
 		p.Position = &dst
+		p.Send(common.MoveMsg{})
 		return
 	}
 	for ; steps > 0; steps-- {
@@ -89,6 +90,7 @@ func (p *Pen) move(steps int, dir common.Direction) {
 			p.Send(err)
 			return
 		}
+		p.Send(common.MoveMsg{})
 		time.Sleep(300 * time.Millisecond)
 	}
 }

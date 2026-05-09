@@ -2,6 +2,7 @@ package pkg
 
 import (
 	"errors"
+	"fmt"
 	"math/rand"
 	"os"
 	"path/filepath"
@@ -9,6 +10,8 @@ import (
 	"charm.land/bubbles/v2/textarea"
 	tea "charm.land/bubbletea/v2"
 	"charm.land/lipgloss/v2"
+	lp "charm.land/lipgloss/v2"
+	"github.com/zrcoder/rdor/pkg/style"
 	"github.com/zrcoder/rdor/pkg/style/color"
 	"github.com/zrcoder/yaq/common"
 	"gopkg.in/yaml.v3"
@@ -58,6 +61,8 @@ func (g *Game) Init() tea.Cmd {
 
 func (g *Game) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
+	case tea.KeyMsg:
+		g.err = nil
 	case common.ErrMsg:
 		g.err = msg
 		return g, nil
@@ -69,17 +74,27 @@ func (g *Game) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (g *Game) View() tea.View {
-	view := tea.NewView("")
-	view.AltScreen = true
-	if g.err != nil {
-		view.Content = g.ErrorView(g.err.Error())
-		return view
-	}
 	if g.currentLevel == nil {
-		view.Content = g.LoadingView()
-		return view
+		return g.Base.View(g.LoadingView(), g.Editor.View())
 	}
-	return g.currentLevel.view()
+
+	title := fmt.Sprintf("%s > %s", g.Name, g.currentLevel.name)
+	title += style.Help.Render(fmt.Sprintf("\tsteps: %d\n", g.currentLevel.steps))
+
+	leftView := ""
+	switch {
+	case g.err != nil:
+		leftView = g.ErrorView(g.err.Error())
+	default:
+		leftView = g.currentLevel.view()
+	}
+	leftView = lp.JoinVertical(lp.Left, title, leftView)
+
+	rightView := lp.JoinVertical(lp.Left,
+		style.Help.Render(g.currentLevel.Hint), "",
+		g.Editor.View(), "",
+		g.KeysView())
+	return g.Base.View(leftView, rightView)
 }
 
 func (g *Game) MarkResult() {
