@@ -75,14 +75,10 @@ func (g *Game) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (g *Game) View() tea.View {
-	if g.allFinished() {
-		return tea.NewView(dialog.Success("all challenges finished!").String())
-	}
-
-	title := fmt.Sprintf("%s > %s", g.Name, g.Levels[g.levelIndex])
-	title += style.Help.Render(fmt.Sprintf("\tLeft: %d\n", g.totalPoses))
 	leftView := ""
 	switch {
+	case g.allFinished():
+		leftView = dialog.Success("all challenges finished!").String()
 	case g.err != nil:
 		leftView = g.ErrorView(g.err.Error())
 	case !g.loaded:
@@ -93,6 +89,11 @@ func (g *Game) View() tea.View {
 		leftView = g.ErrorView("failed")
 	default:
 		leftView = g.currentLevel.View()
+	}
+	title := ""
+	if !g.allFinished() {
+		title := fmt.Sprintf("%s > %s", g.Name, g.Levels[g.levelIndex])
+		title += style.Help.Render(fmt.Sprintf("\tLeft: %d\n", g.totalPoses))
 	}
 	leftView = lp.JoinVertical(lp.Left,
 		title,

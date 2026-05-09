@@ -8,7 +8,7 @@ require (
 	charm.land/lipgloss/v2 v2.0.3
 	github.com/goplus/ixgo v1.0.8
 	github.com/zrcoder/rdor v0.2.3
-	github.com/zrcoder/vtea v0.0.6
+	github.com/zrcoder/vtea v0.0.7-0.20260509133110-f8a1225d848a
 	gopkg.in/yaml.v3 v3.0.1
 )
 
