@@ -1,11 +1,10 @@
 package pkg
 
 import (
+	"embed"
 	"errors"
 	"fmt"
 	"math/rand"
-	"os"
-	"path/filepath"
 
 	"charm.land/bubbles/v2/textarea"
 	tea "charm.land/bubbletea/v2"
@@ -14,6 +13,7 @@ import (
 	"github.com/zrcoder/rdor/pkg/style"
 	"github.com/zrcoder/rdor/pkg/style/color"
 	"github.com/zrcoder/yaq/common"
+	"github.com/zrcoder/yaq/config/hanoi"
 	"gopkg.in/yaml.v3"
 
 	"github.com/zrcoder/yaq"
@@ -91,6 +91,10 @@ func (g *Game) View() string {
 	return view
 }
 
+func (g *Game) FS() embed.FS {
+	return hanoi.FS
+}
+
 func (g *Game) Hint() string {
 	if !g.loaded {
 		return ""
@@ -127,7 +131,7 @@ func (g *Game) loadCurrentLevel() error {
 	if g.allLevelsFinished() {
 		return errors.New("all levels finised")
 	}
-	data, err := os.ReadFile(filepath.Join(g.CfgPath, g.Levels[g.levelIndex]+common.YamlExt))
+	data, err := g.FS().ReadFile(g.Levels[g.levelIndex] + common.YamlExt)
 	if err != nil {
 		return err
 	}

@@ -1,0 +1,49 @@
+answer: |
+  upRight 6
+  downRight 6
+  down 9
+  left 12
+  up 9
+  right 12
+  penUp
+  down 9
+  left 3
+  penDown
+  up 6
+  left 2
+  down 5
+code: |
+  upRight 6
+  downRight 6
+  down 9
+  left 12
+  up 9
+  right 12
+  penUp
+  down 9
+  left 3
+  penDown
+  up 6
+  left 2
+  down 4
+hint: use penUp and penDown commands to move quickly
+layout: |2
+
+
+           x
+          x x
+         x   x
+        x     x
+       x       x
+      x         x
+     Pxxxxxxxxxxxx
+     x           x
+     x           x
+     x      xxx  x
+     x      x x  x
+     x      x x  x
+     x      x x  x
+     x      x x  x
+     x      x x  x
+     xxxxxxxxxxxxx   
+successMsg: wonderful!

@@ -1,0 +1,16 @@
+answer: |
+  upRight right 4
+code: |
+  upRight 3
+hint: You can also move with command `upRight`
+layout: |2
+
+
+
+
+
+          t   s
+
+
+
+          i   t

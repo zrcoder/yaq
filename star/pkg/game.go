@@ -1,18 +1,19 @@
 package pkg
 
 import (
+	"embed"
 	"errors"
 	"fmt"
-	"os"
 	"path/filepath"
 
 	"charm.land/bubbles/v2/textarea"
 	tea "charm.land/bubbletea/v2"
 	lp "charm.land/lipgloss/v2"
-	"gopkg.in/yaml.v3"
-
 	"github.com/zrcoder/rdor/pkg/dialog"
 	"github.com/zrcoder/rdor/pkg/style"
+	"github.com/zrcoder/yaq/config/star"
+	"gopkg.in/yaml.v3"
+
 	"github.com/zrcoder/yaq"
 	"github.com/zrcoder/yaq/common"
 )
@@ -115,6 +116,10 @@ func (g *Game) MarkResult() {
 	g.Send(common.ResMsg{})
 }
 
+func (g *Game) FS() embed.FS {
+	return star.FS
+}
+
 func (g *Game) load() error {
 	if err := yaml.Unmarshal(g.IndexData, g); err != nil {
 		return err
@@ -130,8 +135,8 @@ func (g *Game) loadScenes() error {
 	g.scenes = make([]*Scene, len(g.SceneNames))
 	for i, name := range g.SceneNames {
 		s := &Scene{}
-		path := filepath.Join(g.CfgPath, name, common.IndexFile)
-		if data, err := os.ReadFile(path); err != nil {
+		path := filepath.Join(name, common.IndexFile)
+		if data, err := g.FS().ReadFile(path); err != nil {
 			return err
 		} else if err = yaml.Unmarshal(data, s); err != nil {
 			return err

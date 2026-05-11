@@ -2,7 +2,6 @@ package pkg
 
 import (
 	"fmt"
-	"os"
 	"path/filepath"
 
 	"github.com/zrcoder/yaq/common"
@@ -29,7 +28,7 @@ func (s *Scene) loadLevels() error {
 	s.levels = make([]*Level, len(s.LevelNames))
 	for i, name := range s.LevelNames {
 		l := &Level{}
-		if data, err := os.ReadFile(filepath.Join(s.CfgPath, s.name, name+common.YamlExt)); err != nil {
+		if data, err := s.FS().ReadFile(filepath.Join(s.name, name+common.YamlExt)); err != nil {
 			return err
 		} else if err := yaml.Unmarshal(data, l); err != nil {
 			return err
@@ -46,7 +45,7 @@ func (s *Scene) loadCurrentLevel() error {
 	if len(s.levels) == 0 {
 		return fmt.Errorf("no levels found for scend %s", s.name)
 	}
-	if data, err := os.ReadFile(filepath.Join(s.CfgPath, s.name, s.levels[s.levelIndex].name+common.YamlExt)); err != nil {
+	if data, err := s.FS().ReadFile(filepath.Join(s.name, s.levels[s.levelIndex].name+common.YamlExt)); err != nil {
 		return err
 	} else if err := yaml.Unmarshal(data, s.currentLevel()); err != nil {
 		return err

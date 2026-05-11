@@ -1,0 +1,17 @@
+answer: |
+  right 12
+code: |
+  right 1
+hint: Use `right` command to move and get the star
+layout: |2
+
+
+
+
+
+
+
+
+
+    i           s
+successMsg: Wonderful, you got it!

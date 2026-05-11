@@ -1,0 +1,30 @@
+answer: |
+  dist := 9
+  for raft <- rafts {
+      raft.right dist
+      dist++
+  }
+  up 6
+code: |
+  dist := 9
+  for raft <- rafts {
+      raft.right dist
+      dist++
+  }
+  up 6
+hint: variable
+layout: |2
+       tt     tt
+       tt     tt
+       tt     tt
+       tt     tt
+       tt     tt
+       tt  s  tt
+       tt     tt
+  wwTwwwwwwwwwwwwwwwww
+  wTwwwwwwwwwwwwwwwwww
+  Twwwwwwwwwwwwwwwwwww
+       tt     tt
+       tt  i  tt
+       ttttttttt
+successMsg: Wonderful, you flexibly applied variables!

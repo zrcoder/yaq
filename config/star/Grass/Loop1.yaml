@@ -1,0 +1,26 @@
+answer: |
+  up 2
+  for _ <- :3 {
+       up 4
+       down 4
+       raft.right 5
+  }
+code: |2
+  up 2
+  for _ <- :2 {
+       up 4
+       down 4
+       raft.right 5
+  }
+hint: Loop n times
+layout: |
+  ttttttttttttttttttttttttttttttt
+  ttttttttttttttttttttttttttttttt
+    s tt s tt s
+      tt   tt
+      tt   tt
+      tt   tt
+  wwTwwwwwwwwwwwwwwwwwwwwwwwwwwww
+  w   wwwwwwwwwwwwwwwwwwwwwwwwwww
+    i
+successMsg: Wonderful!

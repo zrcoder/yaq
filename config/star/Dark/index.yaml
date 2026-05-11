@@ -1,0 +1,19 @@
+bgColor1: '#706145'
+bgColor2: '#523626'
+levels:
+- Fire
+sprites:
+  i:
+    canMove: true
+    color: '#ffff00'
+    display: ☻
+    foods: s
+    forbbiden: wt
+    freinds: r
+    isPlayer: true
+    name: yaq
+  s:
+    color: '#ffff00'
+    display: ★
+    group: stars
+    name: star

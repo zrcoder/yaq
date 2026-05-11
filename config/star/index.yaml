@@ -1,0 +1,6 @@
+name: Code star
+rows: 20
+columns: 20
+scenes:
+  - Grass
+  - Dark

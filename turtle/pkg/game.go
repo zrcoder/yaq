@@ -1,19 +1,20 @@
 package pkg
 
 import (
+	"embed"
 	"errors"
 	"fmt"
-	"os"
-	"path/filepath"
 
 	"charm.land/bubbles/v2/textarea"
 	tea "charm.land/bubbletea/v2"
 	lp "charm.land/lipgloss/v2"
 	"github.com/zrcoder/rdor/pkg/dialog"
 	"github.com/zrcoder/rdor/pkg/style"
+	"github.com/zrcoder/yaq/config/turtle"
+	"gopkg.in/yaml.v3"
+
 	"github.com/zrcoder/yaq"
 	"github.com/zrcoder/yaq/common"
-	"gopkg.in/yaml.v3"
 )
 
 var Instance = &Game{}
@@ -116,6 +117,10 @@ func (g *Game) MarkResult() {
 	g.Send(common.ResMsg{})
 }
 
+func (g *Game) FS() embed.FS {
+	return turtle.FS
+}
+
 func (g *Game) load() error {
 	return yaml.Unmarshal(g.IndexData, g)
 }
@@ -130,7 +135,7 @@ func (g *Game) loadCurrentLevel() error {
 	}
 
 	g.currentLevel = &Level{Game: g}
-	data, err := os.ReadFile(filepath.Join(g.CfgPath, g.Levels[g.levelIndex]+common.YamlExt))
+	data, err := g.FS().ReadFile(g.Levels[g.levelIndex] + common.YamlExt)
 	if err != nil {
 		return err
 	}

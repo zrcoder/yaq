@@ -1,0 +1,26 @@
+answer: |
+  right 6
+  down 6
+  left 6
+  up 5
+code: |
+  right 6
+  down 6
+  left 6
+  up 3
+hint: Use up, down, left, right commands to draw
+layout: |2
+
+
+
+
+
+
+        Pxxxxxx
+        x     x
+        x     x
+        x     x
+        x     x
+        x     x
+        xxxxxxx
+successMsg: good job!

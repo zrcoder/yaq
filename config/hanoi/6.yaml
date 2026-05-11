@@ -1,0 +1,17 @@
+answer: |
+  func solve(a, b, c func(), total int) {
+      if total == 0 {
+          return
+      }
+      solve(a, c, b, total-1)
+      // move the only 1 disk from a to c
+      a
+      c
+      solve(b, a, c, total-1)
+  }
+
+  solve A, B, C, 6
+code: ""
+disks: 6
+hint: |
+  write all codes yourself own

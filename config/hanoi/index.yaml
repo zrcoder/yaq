@@ -1,0 +1,7 @@
+name: Hanoi tower
+levels:
+  - "2"
+  - "3"
+  - recursion
+  - "5"
+  - "6"

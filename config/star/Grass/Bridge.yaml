@@ -1,0 +1,20 @@
+answer: |
+  downRight 4
+  doenLeft 4
+code: |
+  down 8
+hint: You can not cross water
+layout: |2
+
+
+
+         i
+
+          bbbbb
+  wwwwwwwwwbbbwwwwwwwwtwwww
+  wwwtwwwwwbbbwwwwwtwtwwwww
+  wwwwwwwwwbbbwwwwwtwwwwtww
+          bbbbb
+
+         s
+successMsg: Yes, the bridge helps!

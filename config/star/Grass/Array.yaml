@@ -1,0 +1,26 @@
+answer: |
+  rafts[0].right 7
+  rafts[1].right 7
+  rafts[2].right 7
+  up 6
+code: |
+  rafts[0].right 7
+  rafts[1].right 7
+  rafts[2].right 9
+  up 6
+hint: rafts[0] is the first raft
+layout: |2
+       tt     tt
+       tt     tt
+       tt     tt
+       tt     tt
+       tt     tt
+       tt  s  tt
+       tt     tt
+  wwTwwwwwwwwwwwwwwwww
+  wwTwwwwwwwwwwwwwwwww
+  wwTwwwwwwwwwwwwwwwww
+       tt     tt
+       tt  i  tt
+       ttttttttt
+successMsg: Good, all the rafts helps!

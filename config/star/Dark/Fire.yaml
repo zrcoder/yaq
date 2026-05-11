@@ -1,0 +1,15 @@
+answer: |
+  up 6
+code: |
+  up 3
+hint: You can also move up
+layout: |2
+
+          s
+
+
+
+
+
+          i
+successMsg: good job!

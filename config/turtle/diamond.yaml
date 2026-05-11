@@ -1,0 +1,29 @@
+answer: |
+  upRight 6
+  downRight 6
+  downLeft 6
+  upLeft 5
+code: |
+  upRight 6
+  downRight 6
+  downLeft 6
+  upLeft 3
+hint: You can also draw with upRight, upLeft, downRight, downLeft commands
+layout: |2
+
+
+
+           x
+          x x
+         x   x
+        x     x
+       x       x
+      x         x
+     P           x
+      x         x
+       x       x
+        x     x
+         x   x
+          x x
+           x
+successMsg: well done!

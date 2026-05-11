@@ -13,9 +13,7 @@ type Base struct {
 	editor        textarea.Model
 	vimEditor     *vtea.Model
 	vimMode       bool
-	CfgPath       string
 	Name          string `yaml:"name"`
-	Mode          string `yaml:"mode"`
 	IndexData     []byte
 	Rows          int `yaml:"rows"`
 	Columns       int `yaml:"columns"`
@@ -30,17 +28,23 @@ func (b *Base) Init(data []byte) {
 	b.IndexData = data
 	b.Keys = getCommonKeys()
 	b.KeysHelp = help.New()
-	b.editor = textarea.New()
-	b.editor.Focus()
-	b.vimEditor = vtea.New(vtea.WithFileName("x.sh"))
+	if b.vimMode {
+		b.vimEditor = vtea.New(vtea.WithFileName("x.sh"))
+	} else {
+		b.editor = textarea.New()
+		b.editor.Focus()
+	}
 }
 
 func (b *Base) SetSceneSize(height, width int) {
 	b.height = height
 	b.width = width
-	b.editor.SetWidth(width)
-	b.editor.SetHeight(height)
-	b.vimEditor.SetSize(width, height)
+	if b.vimMode {
+		b.vimEditor.SetSize(width, height)
+	} else {
+		b.editor.SetWidth(width)
+		b.editor.SetHeight(height)
+	}
 }
 
 func (b *Base) ErrorView(msg string) string {
@@ -113,22 +117,9 @@ func (b *Base) Update(msg tea.Msg) tea.Cmd {
 			if b.RunCodeAction != nil {
 				b.RunCodeAction()
 			}
-		case "ctrl+e":
-			b.switchEditor()
 		}
 	}
 	return nil
-}
-
-func (b *Base) switchEditor() {
-	if b.vimMode {
-		b.vimMode = false
-		b.editor.SetValue(b.vimEditor.Value())
-		b.editor.Focus()
-	} else {
-		b.vimMode = true
-		b.vimEditor.SetValue(b.editor.Value())
-	}
 }
 
 func (b *Base) View(gameView, status string) tea.View {

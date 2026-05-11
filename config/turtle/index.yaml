@@ -1,0 +1,18 @@
+columns: 20
+levels:
+  - rectangle
+  - diamond
+  - house
+name: Turtle graphics
+rows: 20
+sprites:
+  P:
+    sprites: xp
+  p:
+    isPen: true
+    pen:
+      color: "#cccc00"
+      display: ◉
+  x:
+    block:
+      bgColor: "#555555"

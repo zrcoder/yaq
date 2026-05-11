@@ -1,23 +1,27 @@
 package yaq
 
 import (
+	"embed"
 	"fmt"
 	"os"
-	"path/filepath"
 
 	"gopkg.in/yaml.v3"
 
 	"github.com/zrcoder/yaq/common"
 )
 
-func Run(path string) {
-	base := &Base{CfgPath: path}
-	data, err := os.ReadFile(filepath.Join(path, common.IndexFile))
+func Run(gameMode string, vimMode bool) {
+	game, err := get(gameMode)
 	fatalIfError(err)
+
+	data, err := game.FS().ReadFile(common.IndexFile)
+	fatalIfError(err)
+
+	base := &Base{}
 	err = yaml.Unmarshal(data, base)
 	fatalIfError(err)
-	game, err := get(base.Mode)
-	fatalIfError(err)
+
+	base.vimMode = vimMode
 	base.Init(data)
 	game.SetBase(base)
 	game.Run()
@@ -26,6 +30,7 @@ func Run(path string) {
 type Game interface {
 	SetBase(*Base)
 	Run()
+	FS() embed.FS
 }
 
 var supportedGames = map[string]Game{}

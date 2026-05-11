@@ -1,0 +1,29 @@
+answer: |
+  // move all total disks from a to c
+  func solve(a, b, c func(), total int) {
+      if total == 0 {
+          return
+      }
+      solve(a, c, b, total-1)
+      a
+      c
+      solve(b, a, c, total-1)
+  }
+
+  solve A, B, C, 4
+code: |
+  // move all total disks from a to c
+  func solve(a, b, c func(), total int) {
+      if total == 0 {
+          return
+      }
+      solve(a, c, b, total-1)
+      a
+      c
+      solve(b, a, c, total-1)
+  }
+
+  solve A, B, C, 3
+disks: 4
+hint: |
+  use recursion to solve the problem

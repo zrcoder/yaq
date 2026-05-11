@@ -1,0 +1,54 @@
+bgColor1: '#7bd809'
+bgColor2: '#4c8426'
+levels:
+- Right
+- Up
+- Water
+- UpRight
+- AllDirections
+- Bridge
+- Raft
+- Array
+- Loop
+- Loop1
+- Variable
+sprites:
+  R:
+    sprites: wri
+  S:
+    sprites: ws
+  T:
+    sprites: wr
+  b:
+    bgColor: '#8b0000'
+    display: ' '
+    group: bridge
+  i:
+    canMove: true
+    color: '#ffff00'
+    display: ☻
+    foods: s
+    forbbiden: wt
+    freinds: r
+    isPlayer: true
+    name: yaq
+  r:
+    bgColor: '#a52a2a'
+    canMove: true
+    display: ' '
+    forbbiden: ' tb'
+    group: rafts
+    name: raft
+  s:
+    color: '#ffff00'
+    display: ★
+    group: stars
+    name: star
+  t:
+    display: ⚚
+    group: trees
+  w:
+    bgColor: '#0000cc'
+    display: ' '
+    group: water
+    name: water

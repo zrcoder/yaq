@@ -1,0 +1,18 @@
+answer: |
+  raft.right 12
+code: |
+  raft.right 10
+hint: Yaq is on a raft which can move in the water
+layout: |2
+
+
+
+
+
+
+
+  wwwwwwwwwwwwwwwwwwww
+  wwRwwwwwwwwwwwwwwSww
+  wwwwwwwwwwwwwwwwwwww
+
+successMsg: Bingo, the raft helps!

@@ -1,0 +1,17 @@
+answer: |
+  A
+  B
+  A
+  C
+  B
+  C
+code: |
+  A
+  B
+  A
+  C
+  B
+  B
+disks: 2
+hint: |
+  move all disks from A to C, just type piles' names

@@ -1,0 +1,53 @@
+answer: |
+  left 5
+  right 10
+  left 5
+
+  up 5
+  down 10
+  up 5
+
+  upLeft 5
+  downRight 10
+  upLeft 5
+
+  downLeft 5
+  upRight 10
+code: |
+  left 5
+  right 10
+  left 5
+
+  up 5
+  down 10
+  up 5
+
+  upLeft 5
+  downRight 10
+  upLeft 5
+
+  downLeft 5
+  upRight 1
+hint: We can move in all 8 directions
+layout: |2
+  wwwwwwwwwwwwwwwwwwwwwwww
+  wwwwwwwwwwwwwwwwwwwwwwww
+  wwwwwwwwwwwwwwwwwwwwwwww
+  wwwwwwwwwwwwwwwwwwwwwwww
+  wwwwwswwwtstwwwswwwwwwww
+  wwwwww wwt tww wwwwwwwww
+  wwwwwww wt tw wwwwwwwwww
+  wwwwwwww     wwwwwwwwwww
+  wwwwwttt     tttwwwwwwww
+  wwwwws    i    swwwwwwww
+  wwwwwttt     tttwwwwwwww
+  wwwwwwww     wwwwwwwwwww
+  wwwwwww wt tw wwwwwwwwww
+  wwwwww wwt tww wwwwwwwww
+  wwwwwswwwtstwwwswwwwwwww
+  wwwwwwwwwwwwwwwwwwwwwwww
+  wwwttwwwwwwwwwwwwwwwwwww
+  wwwttwwwwwwwwwwwwwwwwwww
+  wwwwwwwwwwwwwwwwwwwwwwww
+  wwwwwwwwwwwwwwwwwwwwwwww
+successMsg: Wonderful, you got it!
