@@ -1,0 +1,139 @@
+package pkg
+
+import (
+	"errors"
+	"fmt"
+	"slices"
+	"strings"
+	"time"
+
+	"github.com/zrcoder/yaq/pkg"
+)
+
+type Sprite struct {
+	*Scene
+	*pkg.Position
+	key       string
+	Name      string `yaml:"name"`
+	Group     string `yaml:"group"`
+	Display   string `yaml:"display"`
+	Color     string `yaml:"color"`
+	BgColor   string `yaml:"bgColor"`
+	Foods     string `yaml:"foods"`
+	Forbbiden string `yaml:"forbbiden"`
+	Freinds   string `yaml:"freinds"`
+	Sprites   string `yaml:"sprites"`
+	count     int
+	IsPlayer  bool `yaml:"isPlayer"`
+	CanMove   bool `yaml:"canMove"`
+}
+
+func (s *Sprite) Up(steps int) {
+	s.move(pkg.Up, steps)
+}
+
+func (s *Sprite) Left(steps int) {
+	s.move(pkg.Left, steps)
+}
+
+func (s *Sprite) Down(steps int) {
+	s.move(pkg.Down, steps)
+}
+
+func (s *Sprite) Right(steps int) {
+	s.move(pkg.Right, steps)
+}
+
+func (s *Sprite) UpLeft(steps int) {
+	s.move(pkg.UpLeft, steps)
+}
+
+func (s *Sprite) UpRight(steps int) {
+	s.move(pkg.UpRight, steps)
+}
+
+func (s *Sprite) DownLeft(steps int) {
+	s.move(pkg.DownLeft, steps)
+}
+
+func (s *Sprite) DownRight(steps int) {
+	s.move(pkg.DownRight, steps)
+}
+
+func (s *Sprite) move(dir pkg.Direction, steps int) {
+	if !s.CanMove {
+		name := s.Name
+		if s.count > 0 {
+			name = s.Group
+		}
+		err := fmt.Errorf("%s can't move", name)
+		s.Send(err)
+		return
+	}
+
+	for ; steps > 0; steps-- {
+		err := s.step(dir)
+		if err != nil {
+			s.Send(err)
+			return
+		}
+		s.Send(pkg.MoveMsg{})
+		time.Sleep(300 * time.Millisecond)
+	}
+}
+
+func (s *Sprite) step(dir pkg.Direction) error {
+	dstPos := s.Transform(dir)
+	if s.outRange(dstPos) {
+		return errors.New("can't move out of the world")
+	}
+	grid := s.currentLevel().grid
+	y, x := s.Y, s.X
+	srcSps := grid[y][x]
+	idx := slices.Index(srcSps, s)
+	toMove := grid[y][x][idx:]
+	dstSps := grid[dstPos.Y][dstPos.X]
+	canCross, name := s.crossCheck(dstSps)
+	if !canCross {
+		return fmt.Errorf("can't cross %s", name)
+	}
+	playerMoving := slices.Contains(srcSps, s.player)
+	if playerMoving && len(dstSps) > 0 {
+		n := len(dstSps)
+		top := dstSps[n-1]
+		if strings.Contains(s.player.Foods, top.key) {
+			s.totalStars--
+			grid[dstPos.Y][dstPos.X] = dstSps[:n-1]
+		}
+	}
+	grid[y][x] = grid[y][x][:idx]
+	grid[dstPos.Y][dstPos.X] = append(grid[dstPos.Y][dstPos.X], toMove...)
+	for _, sp := range toMove {
+		sp.Y = dstPos.Y
+		sp.X = dstPos.X
+	}
+	return nil
+}
+
+func (s *Sprite) crossCheck(sps []*Sprite) (bool, string) {
+	if len(sps) == 0 {
+		return !strings.Contains(s.Forbbiden, " "), "blank"
+	}
+
+	for i := len(sps) - 1; i >= 0; i-- {
+		d := sps[i]
+		if strings.Contains(s.Freinds, d.key) {
+			return true, ""
+		}
+		if strings.Contains(s.Forbbiden, d.key) {
+			return false, d.Name
+		}
+	}
+
+	return true, ""
+}
+
+func (s *Sprite) copy() *Sprite {
+	dst := *s
+	return &dst
+}

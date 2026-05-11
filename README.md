@@ -31,7 +31,7 @@ Solve the classic Tower of Hanoi puzzle programmatically. Master recursion and a
 
 ```sh
 # Install
-go install github.com/zrcoder/yaq/cmd/yaq@latest
+go install github.com/zrcoder/yaq@latest
 
 # Run
 yaq

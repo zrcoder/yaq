@@ -1,0 +1,60 @@
+// export by github.com/goplus/ixgo/cmd/qexp
+
+package pkg
+
+import (
+	q "github.com/zrcoder/yaq/games/star/pkg"
+
+	"reflect"
+
+	"github.com/goplus/ixgo"
+)
+
+func init() {
+	ixgo.RegisterPackage(&ixgo.Package{
+		Name: "pkg",
+		Path: "github.com/zrcoder/yaq/games/star/pkg",
+		Deps: map[string]string{
+			"charm.land/bubbles/v2/textarea":     "textarea",
+			"charm.land/bubbletea/v2":            "tea",
+			"charm.land/lipgloss/v2":             "lipgloss",
+			"cmp":                                "cmp",
+			"embed":                              "embed",
+			"errors":                             "errors",
+			"fmt":                                "fmt",
+			"github.com/zrcoder/rdor/pkg/dialog": "dialog",
+			"github.com/zrcoder/rdor/pkg/style":  "style",
+			"github.com/zrcoder/yaq/config/star": "star",
+			"github.com/zrcoder/yaq/pkg":         "pkg",
+			"gopkg.in/yaml.v3":                   "yaml",
+			"path/filepath":                      "filepath",
+			"slices":                             "slices",
+			"strings":                            "strings",
+			"time":                               "time",
+		},
+		Interfaces: map[string]reflect.Type{},
+		NamedTypes: map[string]reflect.Type{
+			"Game":   reflect.TypeFor[q.Game](),
+			"Level":  reflect.TypeFor[q.Level](),
+			"Scene":  reflect.TypeFor[q.Scene](),
+			"Sprite": reflect.TypeFor[q.Sprite](),
+		},
+		AliasTypes: map[string]reflect.Type{},
+		Vars: map[string]reflect.Value{
+			"Instance": reflect.ValueOf(&q.Instance),
+		},
+		Funcs: map[string]reflect.Value{
+			"Down":      reflect.ValueOf(q.Down),
+			"DownLeft":  reflect.ValueOf(q.DownLeft),
+			"DownRight": reflect.ValueOf(q.DownRight),
+			"GetSprite": reflect.ValueOf(q.GetSprite),
+			"Left":      reflect.ValueOf(q.Left),
+			"Right":     reflect.ValueOf(q.Right),
+			"Up":        reflect.ValueOf(q.Up),
+			"UpLeft":    reflect.ValueOf(q.UpLeft),
+			"UpRight":   reflect.ValueOf(q.UpRight),
+		},
+		TypedConsts:   map[string]ixgo.TypedConst{},
+		UntypedConsts: map[string]ixgo.UntypedConst{},
+	})
+}

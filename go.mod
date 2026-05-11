@@ -9,7 +9,7 @@ require (
 	charm.land/lipgloss/v2 v2.0.3
 	github.com/goplus/ixgo v1.0.8
 	github.com/zrcoder/rdor v0.2.3
-	github.com/zrcoder/vtea v0.0.5-0.20260511053638-96f737d6696e
+	github.com/zrcoder/vtea v0.0.5-0.20260511140613-f88770cfee73
 	gopkg.in/yaml.v3 v3.0.1
 )
 
@@ -43,10 +43,6 @@ require (
 	github.com/visualfc/funcval v0.1.4 // indirect
 	github.com/visualfc/xtype v0.3.0 // indirect
 	github.com/xo/terminfo v0.0.0-20220910002029-abceb7e1c41e // indirect
-	golang.design/x/clipboard v0.7.1 // indirect
-	golang.org/x/exp/shiny v0.0.0-20260508232706-74f9aab9d74a // indirect
-	golang.org/x/image v0.40.0 // indirect
-	golang.org/x/mobile v0.0.0-20260508232728-bebd421c7fa8 // indirect
 	golang.org/x/mod v0.36.0 // indirect
 	golang.org/x/sync v0.20.0 // indirect
 	golang.org/x/sys v0.44.0 // indirect

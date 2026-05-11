@@ -8,5 +8,8 @@ tasks:
       - go fmt ./...
       - go fix ./...
       - goimports -w .
-  dev:
-    deps: [fmt, gen]
+  run:
+    deps: [fmt]
+    cmds:
+      - go run .
+

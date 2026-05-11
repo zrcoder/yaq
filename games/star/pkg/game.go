@@ -1,0 +1,193 @@
+package pkg
+
+import (
+	"embed"
+	"errors"
+	"fmt"
+	"path/filepath"
+
+	"charm.land/bubbles/v2/textarea"
+	tea "charm.land/bubbletea/v2"
+	lp "charm.land/lipgloss/v2"
+	"github.com/zrcoder/rdor/pkg/dialog"
+	"github.com/zrcoder/rdor/pkg/style"
+	"github.com/zrcoder/yaq/config/star"
+	"gopkg.in/yaml.v3"
+
+	"github.com/zrcoder/yaq/pkg"
+)
+
+var Instance = &Game{}
+
+type Game struct {
+	err error
+	*tea.Program
+	*pkg.Base
+	player      *Sprite
+	successInfo string
+	state       pkg.State
+	scenes      []*Scene `yaml:"_"`
+	SceneNames  []string `yaml:"scenes"`
+	sceneIndex  int
+	totalStars  int
+	loaded      bool
+}
+
+func (g *Game) Init() tea.Cmd {
+	if err := g.load(); err != nil {
+		return func() tea.Msg { return err }
+	}
+	g.SetEditorSize(g.Columns*3, g.Rows)
+	return textarea.Blink
+}
+
+func (g *Game) Update(msg tea.Msg) tea.Cmd {
+	if g.allFinished() {
+		return nil
+	}
+
+	switch msg := msg.(type) {
+	case pkg.ErrMsg:
+		g.err = msg
+		g.state = pkg.Failed
+		return nil
+	case tea.KeyMsg:
+		g.err = nil
+		switch g.state {
+		case pkg.Succeed:
+			g.state = pkg.Running
+			g.gotoNextLevel()
+		case pkg.Failed:
+			g.state = pkg.Running
+			g.resetLevel()
+		default:
+		}
+	}
+	g.successInfo = "Well done!"
+	if !g.allFinished() {
+		g.successInfo = g.currentLevel().SuccessMsg
+	}
+	return g.EditorUpdate(msg)
+}
+
+func (g *Game) View() string {
+	view := ""
+	switch {
+	case g.allFinished():
+		view = dialog.Success("all challenges finished!").String()
+	case g.err != nil:
+		view = g.ErrorView(g.err.Error())
+	case !g.loaded:
+		view = g.LoadingView()
+	case g.state == pkg.Succeed:
+		view = g.SucceedView(g.successInfo)
+	case g.state == pkg.Failed:
+		view = g.ErrorView("failed")
+	default:
+		view = g.currentLevel().view()
+	}
+	title := ""
+	if !g.allFinished() {
+		title := fmt.Sprintf("%s > %s > %s", g.Name, g.currentScene().name, g.currentLevel().name)
+		title += style.Help.Render(fmt.Sprintf("\tLeft: %d\n", g.totalStars))
+	}
+	view = lp.JoinVertical(lp.Left, title, view)
+	return view
+}
+
+func (g *Game) Hint() string {
+	if !g.loaded {
+		return ""
+	}
+	return g.currentLevel().Hint
+}
+
+func (g *Game) PreCode() string {
+	return g.currentLevel().preCode
+}
+
+func (g *Game) MarkResult() {
+	if g.succeed() {
+		g.state = pkg.Succeed
+	} else {
+		g.state = pkg.Failed
+	}
+	g.Send(pkg.ResMsg{})
+}
+
+func (g *Game) FS() embed.FS {
+	return star.FS
+}
+
+func (g *Game) load() error {
+	if err := yaml.Unmarshal(g.IndexData, g); err != nil {
+		return err
+	}
+	return g.loadScenes()
+}
+
+func (g *Game) loadScenes() error {
+	if len(g.SceneNames) == 0 {
+		return errors.New("no scenes in config")
+	}
+
+	g.scenes = make([]*Scene, len(g.SceneNames))
+	for i, name := range g.SceneNames {
+		s := &Scene{}
+		path := filepath.Join(name, pkg.IndexFile)
+		if data, err := g.FS().ReadFile(path); err != nil {
+			return err
+		} else if err = yaml.Unmarshal(data, s); err != nil {
+			return err
+		}
+		s.Game = g
+		s.name = name
+		s.bgColors[0] = s.BgColor1
+		s.bgColors[1] = s.BgColor2
+		for k, sp := range s.Sprites {
+			sp.key = k
+		}
+		g.scenes[i] = s
+	}
+	g.sceneIndex = 0
+	return g.currentScene().loadLevels()
+}
+
+func (g *Game) currentScene() *Scene { return g.scenes[g.sceneIndex] }
+func (g *Game) currentLevel() *Level { return g.currentScene().currentLevel() }
+
+func (g *Game) succeed() bool {
+	return g.err == nil && g.totalStars == 0
+}
+
+func (g *Game) gotoNextLevel() {
+	if g.allFinished() {
+		return
+	}
+	g.state = pkg.Running
+	if len(g.currentScene().LevelNames) == g.currentScene().levelIndex+1 {
+		g.sceneIndex++
+		if g.sceneIndex == len(g.scenes) {
+			return
+		}
+		g.currentScene().levelIndex = 0
+		if err := g.currentScene().loadLevels(); err != nil {
+			g.err = err
+		}
+		return
+	}
+	g.currentScene().levelIndex++
+	g.err = g.currentScene().loadCurrentLevel()
+}
+
+func (g *Game) resetLevel() {
+	g.state = pkg.Running
+	g.err = g.currentLevel().initialize()
+}
+
+func (g *Game) allFinished() bool {
+	return len(g.scenes) == 0 ||
+		g.sceneIndex == len(g.scenes) ||
+		len(g.currentScene().levels) == 0 ||
+		g.sceneIndex+1 == len(g.scenes) && g.currentScene().levelIndex == len(g.currentScene().levels)
+}
