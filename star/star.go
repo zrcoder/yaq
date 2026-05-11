@@ -40,8 +40,12 @@ func (s *star) Run() {
 
 func (s *star) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	cmdBase := s.Base.Update(msg)
-	_, cmd := s.Game.Update(msg)
+	cmd := s.Game.Update(msg)
 	return s, tea.Batch(cmdBase, cmd)
+}
+
+func (s *star) View() tea.View {
+	return s.Base.View(s.Game.View(), s.Game.Hint())
 }
 
 func (s *star) runCode() {

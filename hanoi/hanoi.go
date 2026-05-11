@@ -37,8 +37,11 @@ func (h *hanoi) Run() {
 
 func (h *hanoi) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	cmdBase := h.Base.Update(msg)
-	_, cmd := h.Game.Update(msg)
+	cmd := h.Game.Update(msg)
 	return h, tea.Batch(cmdBase, cmd)
+}
+func (g *hanoi) View() tea.View {
+	return g.Base.View(g.Game.View(), g.Hint())
 }
 
 func (h *hanoi) runCode() {

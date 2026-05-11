@@ -46,16 +46,16 @@ func (g *Game) Init() tea.Cmd {
 	return textarea.Blink
 }
 
-func (g *Game) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+func (g *Game) Update(msg tea.Msg) tea.Cmd {
 	if g.allFinished() {
-		return g, nil
+		return nil
 	}
 
 	switch msg := msg.(type) {
 	case common.ErrMsg:
 		g.err = msg
 		g.state = common.Failed
-		return g, nil
+		return nil
 	case tea.KeyMsg:
 		g.err = nil
 		switch g.state {
@@ -69,44 +69,42 @@ func (g *Game) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 	}
 
-	cmd := g.EditorUpdate(msg)
-	return g, cmd
+	return g.EditorUpdate(msg)
 }
 
-func (g *Game) View() tea.View {
-	leftView := ""
+func (g *Game) View() string {
+	view := ""
 	switch {
 	case g.allFinished():
-		leftView = dialog.Success("all challenges finished!").String()
+		view = dialog.Success("all challenges finished!").String()
 	case g.err != nil:
-		leftView = g.ErrorView(g.err.Error())
+		view = g.ErrorView(g.err.Error())
 	case !g.loaded:
-		leftView = g.LoadingView()
+		view = g.LoadingView()
 	case g.state == common.Succeed:
-		leftView = g.SucceedView("Well done")
+		view = g.SucceedView("Well done")
 	case g.state == common.Failed:
-		leftView = g.ErrorView("failed")
+		view = g.ErrorView("failed")
 	default:
-		leftView = g.currentLevel.View()
+		view = g.currentLevel.View()
 	}
 	title := ""
 	if !g.allFinished() {
 		title := fmt.Sprintf("%s > %s", g.Name, g.Levels[g.levelIndex])
 		title += style.Help.Render(fmt.Sprintf("\tLeft: %d\n", g.totalPoses))
 	}
-	leftView = lp.JoinVertical(lp.Left,
+	view = lp.JoinVertical(lp.Left,
 		title,
-		leftView,
+		view,
 	)
-	hintView := ""
-	if g.loaded {
-		hintView = style.Help.Render(g.currentLevel.Hint)
+	return view
+}
+
+func (g *Game) Hint() string {
+	if !g.loaded {
+		return ""
 	}
-	rightView := lp.JoinVertical(lp.Left,
-		hintView, "",
-		g.EditorView(), "",
-		g.KeysView())
-	return g.Base.View(leftView, rightView)
+	return g.currentLevel.Hint
 }
 
 func (g *Game) MarkResult() {

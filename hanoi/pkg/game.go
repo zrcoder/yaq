@@ -59,42 +59,43 @@ func (g *Game) Init() tea.Cmd {
 	return textarea.Blink
 }
 
-func (g *Game) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+func (g *Game) Update(msg tea.Msg) tea.Cmd {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		g.err = nil
 	case common.ErrMsg:
 		g.err = msg
-		return g, nil
+		return nil
 	}
 	if g.currentLevel == nil {
-		return g, nil
+		return nil
 	}
-	return g, g.currentLevel.update(msg)
+	return g.currentLevel.update(msg)
 }
 
-func (g *Game) View() tea.View {
+func (g *Game) View() string {
 	if g.currentLevel == nil {
-		return g.Base.View(g.LoadingView(), g.EditorView())
+		return g.LoadingView()
 	}
 
-	title := fmt.Sprintf("%s > %s", g.Name, g.currentLevel.name)
-	title += style.Help.Render(fmt.Sprintf("\tsteps: %d\n", g.currentLevel.steps))
-
-	leftView := ""
+	view := ""
 	switch {
 	case g.err != nil:
-		leftView = g.ErrorView(g.err.Error())
+		view = g.ErrorView(g.err.Error())
 	default:
-		leftView = g.currentLevel.view()
+		view = g.currentLevel.view()
 	}
-	leftView = lp.JoinVertical(lp.Left, title, leftView)
+	title := fmt.Sprintf("%s > %s", g.Name, g.currentLevel.name)
+	title += style.Help.Render(fmt.Sprintf("\tsteps: %d\n", g.currentLevel.steps))
+	view = lp.JoinVertical(lp.Left, title, view)
+	return view
+}
 
-	rightView := lp.JoinVertical(lp.Left,
-		style.Help.Render(g.currentLevel.Hint), "",
-		g.EditorView(), "",
-		g.KeysView())
-	return g.Base.View(leftView, rightView)
+func (g *Game) Hint() string {
+	if !g.loaded {
+		return ""
+	}
+	return g.currentLevel.Hint
 }
 
 func (g *Game) MarkResult() {

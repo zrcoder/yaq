@@ -34,8 +34,12 @@ func (t *turtle) Run() {
 
 func (t *turtle) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	cmdBase := t.Base.Update(msg)
-	_, cmd := t.Game.Update(msg)
+	cmd := t.Game.Update(msg)
 	return t, tea.Batch(cmdBase, cmd)
+}
+
+func (t *turtle) View() tea.View {
+	return t.Base.View(t.Game.View(), t.Hint())
 }
 
 func (t *turtle) runCode() {

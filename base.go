@@ -63,12 +63,6 @@ func (b *Base) KeysView() string {
 	return b.KeysHelp.View(b.Keys)
 }
 
-func (b *Base) View(leftView, rightView string) tea.View {
-	view := tea.NewView(lp.JoinHorizontal(lp.Top, leftView, "  ", rightView))
-	view.AltScreen = true
-	return view
-}
-
 func (b *Base) EditorValue() string {
 	if b.vimMode {
 		return b.vimEditor.Value()
@@ -135,4 +129,19 @@ func (b *Base) switchEditor() {
 		b.vimMode = true
 		b.vimEditor.SetValue(b.editor.Value())
 	}
+}
+
+func (b *Base) View(gameView, status string) tea.View {
+	view := tea.NewView(lp.JoinHorizontal(lp.Top,
+		gameView, "  ",
+		b.rightView(status)))
+	view.AltScreen = true
+	return view
+}
+
+func (b *Base) rightView(status string) string {
+	return lp.JoinVertical(lp.Left,
+		status, "",
+		b.EditorView(), "",
+		b.KeysView())
 }
