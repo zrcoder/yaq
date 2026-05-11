@@ -2,6 +2,7 @@ package yaq
 
 import (
 	"charm.land/bubbles/v2/help"
+	"charm.land/bubbles/v2/textarea"
 	tea "charm.land/bubbletea/v2"
 	lp "charm.land/lipgloss/v2"
 	"github.com/zrcoder/rdor/pkg/dialog"
@@ -9,7 +10,9 @@ import (
 )
 
 type Base struct {
-	Editor    *vtea.Model
+	editor    textarea.Model
+	vimEditor *vtea.Model
+	vimMode   bool
 	CfgPath   string
 	Name      string `yaml:"name"`
 	Mode      string `yaml:"mode"`
@@ -26,14 +29,17 @@ func (b *Base) Init(data []byte) {
 	b.IndexData = data
 	b.Keys = getCommonKeys()
 	b.KeysHelp = help.New()
-	ta := vtea.New(vtea.WithFileName("x.sh"))
-	b.Editor = ta
+	b.editor = textarea.New()
+	b.editor.Focus()
+	b.vimEditor = vtea.New(vtea.WithFileName("x.sh"))
 }
 
 func (b *Base) SetSceneSize(height, width int) {
 	b.height = height
 	b.width = width
-	b.Editor.SetSize(width, height)
+	b.editor.SetWidth(width)
+	b.editor.SetHeight(height)
+	b.vimEditor.SetSize(width, height)
 }
 
 func (b *Base) ErrorView(msg string) string {
@@ -60,4 +66,55 @@ func (b *Base) View(leftView, rightView string) tea.View {
 	view := tea.NewView(lp.JoinHorizontal(lp.Top, leftView, "  ", rightView))
 	view.AltScreen = true
 	return view
+}
+
+func (b *Base) EditorValue() string {
+	if b.vimMode {
+		return b.vimEditor.Value()
+	}
+	return b.editor.Value()
+}
+
+func (b *Base) EditorView() string {
+	if b.vimMode {
+		return b.vimEditor.View()
+	}
+	return b.editor.View()
+}
+
+func (b *Base) SetEditorValue(s string) {
+	if b.vimMode {
+		b.vimEditor.SetValue(s)
+	} else {
+		b.editor.SetValue(s)
+	}
+}
+
+func (b *Base) SetEditorSize(width, height int) {
+	if b.vimMode {
+		b.vimEditor.SetSize(width, height)
+	} else {
+		b.editor.SetWidth(width)
+		b.editor.SetHeight(height)
+	}
+}
+
+func (b *Base) EditorUpdate(msg tea.Msg) (cmd tea.Cmd) {
+	if b.vimMode {
+		b.vimEditor, cmd = b.vimEditor.Update(msg)
+		return cmd
+	}
+	b.editor, cmd = b.editor.Update(msg)
+	return
+}
+
+func (b *Base) SwitchEditor() {
+	if b.vimMode {
+		b.vimMode = false
+		b.editor.SetValue(b.vimEditor.Value())
+		b.editor.Focus()
+	} else {
+		b.vimMode = true
+		b.vimEditor.SetValue(b.editor.Value())
+	}
 }

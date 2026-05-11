@@ -69,8 +69,7 @@ func (g *Game) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 	}
 
-	var cmd tea.Cmd
-	g.Editor, cmd = g.Editor.Update(msg)
+	cmd := g.EditorUpdate(msg)
 	return g, cmd
 }
 
@@ -105,7 +104,7 @@ func (g *Game) View() tea.View {
 	}
 	rightView := lp.JoinVertical(lp.Left,
 		hintView, "",
-		g.Editor.View(), "",
+		g.EditorView(), "",
 		g.KeysView())
 	return g.Base.View(leftView, rightView)
 }

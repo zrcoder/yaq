@@ -114,7 +114,7 @@ func (l *Level) calculate() error {
 		l.helpItems = append(l.helpItems, sp)
 	}
 	l.preCode = buf.String() + "\n" + appendBuf.String()
-	l.Editor.SetValue(strings.TrimRight(l.Code, "\n"))
+	l.SetEditorValue(strings.TrimRight(l.Code, "\n"))
 	slices.SortFunc(l.helpItems, func(a, b *Sprite) int { return cmp.Compare(a.Name, b.Name) })
 	l.loaded = true
 	return nil

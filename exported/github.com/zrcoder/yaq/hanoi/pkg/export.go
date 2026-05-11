@@ -33,10 +33,10 @@ func init() {
 		},
 		Interfaces: map[string]reflect.Type{},
 		NamedTypes: map[string]reflect.Type{
-			"Disk":  reflect.TypeFor[q.Disk](),
-			"Game":  reflect.TypeFor[q.Game](),
-			"Level": reflect.TypeFor[q.Level](),
-			"Pile":  reflect.TypeFor[q.Pile](),
+			"Disk":  reflect.TypeOf((*q.Disk)(nil)).Elem(),
+			"Game":  reflect.TypeOf((*q.Game)(nil)).Elem(),
+			"Level": reflect.TypeOf((*q.Level)(nil)).Elem(),
+			"Pile":  reflect.TypeOf((*q.Pile)(nil)).Elem(),
 		},
 		AliasTypes: map[string]reflect.Type{},
 		Vars: map[string]reflect.Value{

@@ -39,6 +39,8 @@ func (t *turtle) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return t, tea.Quit
 		case "ctrl+r":
 			t.runCode()
+		case "ctrl+e":
+			t.SwitchEditor()
 		}
 	}
 	var cmd tea.Cmd
@@ -56,5 +58,5 @@ func (s *turtle) runCode() {
 		} else {
 			s.MarkResult()
 		}
-	}(preCode + s.Editor.Value())
+	}(preCode + s.EditorValue())
 }

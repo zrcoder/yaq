@@ -59,7 +59,7 @@ func (l *Level) initialize() error {
 	}
 	l.pen.Game = l.Game
 	l.pen.setStateUp(l.pen.IsUp)
-	l.Editor.SetValue(strings.TrimRight(l.Code, "\n"))
+	l.SetEditorValue(strings.TrimRight(l.Code, "\n"))
 	return nil
 }
 

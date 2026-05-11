@@ -75,7 +75,7 @@ func (g *Game) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 func (g *Game) View() tea.View {
 	if g.currentLevel == nil {
-		return g.Base.View(g.LoadingView(), g.Editor.View())
+		return g.Base.View(g.LoadingView(), g.EditorView())
 	}
 
 	title := fmt.Sprintf("%s > %s", g.Name, g.currentLevel.name)
@@ -92,7 +92,7 @@ func (g *Game) View() tea.View {
 
 	rightView := lp.JoinVertical(lp.Left,
 		style.Help.Render(g.currentLevel.Hint), "",
-		g.Editor.View(), "",
+		g.EditorView(), "",
 		g.KeysView())
 	return g.Base.View(leftView, rightView)
 }

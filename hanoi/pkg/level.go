@@ -41,7 +41,7 @@ func (l *Level) initialize() error {
 		disks[l.Disks-i] = newDisk(i, l.diskStyles[i-1])
 	}
 	l.piles[0].disks = disks
-	l.Editor.SetValue(strings.TrimRight(l.Code, "\n"))
+	l.SetEditorValue(strings.TrimRight(l.Code, "\n"))
 	return nil
 }
 
@@ -63,9 +63,7 @@ func (l *Level) update(msg tea.Msg) tea.Cmd {
 		default:
 		}
 	}
-	var cmd tea.Cmd
-	l.Editor, cmd = l.Editor.Update(msg)
-	return cmd
+	return l.EditorUpdate(msg)
 }
 
 func (l *Level) view() string {

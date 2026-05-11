@@ -45,6 +45,8 @@ func (s *star) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return s, tea.Quit
 		case "ctrl+r":
 			s.runCode()
+		case "ctrl+e":
+			s.SwitchEditor()
 		}
 	}
 	var cmd tea.Cmd
@@ -61,5 +63,5 @@ func (s *star) runCode() {
 		} else {
 			s.MarkResult()
 		}
-	}(s.PreCode() + s.Editor.Value())
+	}(s.PreCode() + s.EditorValue())
 }

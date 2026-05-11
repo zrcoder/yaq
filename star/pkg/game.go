@@ -37,7 +37,7 @@ func (g *Game) Init() tea.Cmd {
 	if err := g.load(); err != nil {
 		return func() tea.Msg { return err }
 	}
-	g.Editor.SetSize(g.Columns*3, g.Rows)
+	g.SetEditorSize(g.Columns*3, g.Rows)
 	return textarea.Blink
 }
 
@@ -67,8 +67,7 @@ func (g *Game) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	if !g.allFinished() {
 		g.successInfo = g.currentLevel().SuccessMsg
 	}
-	var cmd tea.Cmd
-	g.Editor, cmd = g.Editor.Update(msg)
+	cmd := g.EditorUpdate(msg)
 	return g, cmd
 }
 
@@ -96,7 +95,7 @@ func (g *Game) View() tea.View {
 	leftView = lp.JoinVertical(lp.Left, title, leftView)
 	rightView := lp.JoinVertical(lp.Left,
 		style.Help.Render(g.currentLevel().Hint), "",
-		g.Editor.View(), "",
+		g.EditorView(), "",
 		g.KeysView())
 	return g.Base.View(leftView, rightView)
 }

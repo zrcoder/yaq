@@ -42,6 +42,8 @@ func (h *hanoi) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return h, tea.Quit
 		case "ctrl+r":
 			h.runCode()
+		case "ctrl+e":
+			h.SwitchEditor()
 		}
 	}
 	var cmd tea.Cmd
@@ -59,5 +61,5 @@ func (h *hanoi) runCode() {
 		} else {
 			h.MarkResult()
 		}
-	}(precode + h.Editor.Value())
+	}(precode + h.EditorValue())
 }
