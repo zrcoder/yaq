@@ -23,6 +23,7 @@ type hanoi struct {
 
 func (h *hanoi) SetBase(base *yaq.Base) {
 	h.Base = base
+	h.Base.RunCodeAction = h.runCode
 }
 
 func (h *hanoi) Run() {
@@ -35,20 +36,9 @@ func (h *hanoi) Run() {
 }
 
 func (h *hanoi) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
-	switch msg := msg.(type) {
-	case tea.KeyPressMsg:
-		switch msg.String() {
-		case "ctrl+c":
-			return h, tea.Quit
-		case "ctrl+r":
-			h.runCode()
-		case "ctrl+e":
-			h.SwitchEditor()
-		}
-	}
-	var cmd tea.Cmd
-	_, cmd = h.Game.Update(msg)
-	return h, cmd
+	cmdBase := h.Base.Update(msg)
+	_, cmd := h.Game.Update(msg)
+	return h, tea.Batch(cmdBase, cmd)
 }
 
 func (h *hanoi) runCode() {

@@ -20,6 +20,7 @@ type turtle struct{ *pkg.Game }
 
 func (t *turtle) SetBase(base *yaq.Base) {
 	t.Base = base
+	t.Base.RunCodeAction = t.runCode
 }
 
 func (t *turtle) Run() {
@@ -32,31 +33,20 @@ func (t *turtle) Run() {
 }
 
 func (t *turtle) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
-	switch msg := msg.(type) {
-	case tea.KeyMsg:
-		switch msg.String() {
-		case "ctrl+c":
-			return t, tea.Quit
-		case "ctrl+r":
-			t.runCode()
-		case "ctrl+e":
-			t.SwitchEditor()
-		}
-	}
-	var cmd tea.Cmd
-	_, cmd = t.Game.Update(msg)
-	return t, cmd
+	cmdBase := t.Base.Update(msg)
+	_, cmd := t.Game.Update(msg)
+	return t, tea.Batch(cmdBase, cmd)
 }
 
-func (s *turtle) runCode() {
+func (t *turtle) runCode() {
 	preCode := `import . "github.com/zrcoder/yaq/turtle/pkg"` + "\n"
 	go func(code string) {
 		_, err := ixgo.RunFile("main.xgo", code, nil, 0)
 		if err != nil {
 			err = common.ParseBuildError(err, preCode)
-			s.Send(err)
+			t.Send(err)
 		} else {
-			s.MarkResult()
+			t.MarkResult()
 		}
-	}(preCode + s.EditorValue())
+	}(preCode + t.EditorValue())
 }

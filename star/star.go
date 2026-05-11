@@ -26,6 +26,7 @@ type star struct {
 
 func (s *star) SetBase(base *yaq.Base) {
 	s.Base = base
+	s.Base.RunCodeAction = s.runCode
 }
 
 func (s *star) Run() {
@@ -38,20 +39,9 @@ func (s *star) Run() {
 }
 
 func (s *star) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
-	switch msg := msg.(type) {
-	case tea.KeyMsg:
-		switch msg.String() {
-		case "ctrl+c":
-			return s, tea.Quit
-		case "ctrl+r":
-			s.runCode()
-		case "ctrl+e":
-			s.SwitchEditor()
-		}
-	}
-	var cmd tea.Cmd
-	_, cmd = s.Game.Update(msg)
-	return s, cmd
+	cmdBase := s.Base.Update(msg)
+	_, cmd := s.Game.Update(msg)
+	return s, tea.Batch(cmdBase, cmd)
 }
 
 func (s *star) runCode() {

@@ -10,19 +10,20 @@ import (
 )
 
 type Base struct {
-	editor    textarea.Model
-	vimEditor *vtea.Model
-	vimMode   bool
-	CfgPath   string
-	Name      string `yaml:"name"`
-	Mode      string `yaml:"mode"`
-	IndexData []byte
-	Rows      int `yaml:"rows"`
-	Columns   int `yaml:"columns"`
-	height    int
-	width     int
-	Keys      KeyMap
-	KeysHelp  help.Model
+	editor        textarea.Model
+	vimEditor     *vtea.Model
+	vimMode       bool
+	CfgPath       string
+	Name          string `yaml:"name"`
+	Mode          string `yaml:"mode"`
+	IndexData     []byte
+	Rows          int `yaml:"rows"`
+	Columns       int `yaml:"columns"`
+	height        int
+	width         int
+	Keys          KeyMap
+	KeysHelp      help.Model
+	RunCodeAction func()
 }
 
 func (b *Base) Init(data []byte) {
@@ -108,7 +109,24 @@ func (b *Base) EditorUpdate(msg tea.Msg) (cmd tea.Cmd) {
 	return
 }
 
-func (b *Base) SwitchEditor() {
+func (b *Base) Update(msg tea.Msg) tea.Cmd {
+	switch msg := msg.(type) {
+	case tea.KeyPressMsg:
+		switch msg.String() {
+		case "ctrl+c":
+			return tea.Quit
+		case "ctrl+r":
+			if b.RunCodeAction != nil {
+				b.RunCodeAction()
+			}
+		case "ctrl+e":
+			b.switchEditor()
+		}
+	}
+	return nil
+}
+
+func (b *Base) switchEditor() {
 	if b.vimMode {
 		b.vimMode = false
 		b.editor.SetValue(b.vimEditor.Value())
