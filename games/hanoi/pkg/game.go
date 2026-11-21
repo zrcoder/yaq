@@ -14,7 +14,7 @@ import (
 	"github.com/zrcoder/rdor/pkg/style/color"
 	"github.com/zrcoder/yaq/config/hanoi"
 	"github.com/zrcoder/yaq/pkg"
-	"gopkg.in/yaml.v3"
+	"go.yaml.in/yaml/v4"
 )
 
 const (

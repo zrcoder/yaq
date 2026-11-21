@@ -12,7 +12,7 @@ import (
 	"github.com/zrcoder/rdor/pkg/dialog"
 	"github.com/zrcoder/rdor/pkg/style"
 	"github.com/zrcoder/yaq/config/star"
-	"gopkg.in/yaml.v3"
+	"go.yaml.in/yaml/v4"
 
 	"github.com/zrcoder/yaq/pkg"
 )

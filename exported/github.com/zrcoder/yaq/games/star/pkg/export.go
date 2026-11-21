@@ -26,7 +26,7 @@ func init() {
 			"github.com/zrcoder/rdor/pkg/style":  "style",
 			"github.com/zrcoder/yaq/config/star": "star",
 			"github.com/zrcoder/yaq/pkg":         "pkg",
-			"gopkg.in/yaml.v3":                   "yaml",
+			"go.yaml.in/yaml/v4":                 "yaml",
 			"path/filepath":                      "filepath",
 			"slices":                             "slices",
 			"strings":                            "strings",
@@ -34,10 +34,10 @@ func init() {
 		},
 		Interfaces: map[string]reflect.Type{},
 		NamedTypes: map[string]reflect.Type{
-			"Game":   reflect.TypeFor[q.Game](),
-			"Level":  reflect.TypeFor[q.Level](),
-			"Scene":  reflect.TypeFor[q.Scene](),
-			"Sprite": reflect.TypeFor[q.Sprite](),
+			"Game":   reflect.TypeOf((*q.Game)(nil)).Elem(),
+			"Level":  reflect.TypeOf((*q.Level)(nil)).Elem(),
+			"Scene":  reflect.TypeOf((*q.Scene)(nil)).Elem(),
+			"Sprite": reflect.TypeOf((*q.Sprite)(nil)).Elem(),
 		},
 		AliasTypes: map[string]reflect.Type{},
 		Vars: map[string]reflect.Value{
